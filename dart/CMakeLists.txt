@@ -6,7 +6,7 @@ if(MSVC)
 endif()
 
 set(CORE_SUBDIRS common math dynamics renderer lcpsolver constraint integration simulation)
-set(NONCORE_SUBDIRS gui planning utils)
+set(NONCORE_SUBDIRS gui planning)
 # optimizer is also a NONCORE_SUBDIR, but it will be handled separately
 
 # Search all header and source files
@@ -52,6 +52,21 @@ foreach(SUBDIR ${NONCORE_SUBDIRS})
   file(GLOB_RECURSE subdir_srcs ${SUBDIR}/*.cpp ${SUBDIR}/*.h)
   set(noncore_srcs ${noncore_srcs} ${subdir_srcs})
 endforeach()
+
+file(GLOB subdir_srcs utils/*.cpp utils/*.h)
+set(noncore_srcs ${noncore_srcs} ${subdir_srcs})
+
+file(GLOB subdir_srcs utils/urdf/*.cpp utils/urdf/*.h)
+set(noncore_srcs ${noncore_srcs} ${subdir_srcs})
+
+set(subdir_srcs utils/sdf/SdfParser.cpp utils/sdf/SdfParser.h
+                utils/sdf/SoftSdfParser.cpp utils/sdf/SoftSdfParser.h)
+set(noncore_srcs ${noncore_srcs} ${subdir_srcs})
+
+if(HAVE_SDFORMAT)
+  set(subdir_srcs utils/sdf/SdfLoader.cpp utils/sdf/SdfLoader.h)
+  set(noncore_srcs ${noncore_srcs} ${subdir_srcs})
+endif()
 
 # Setup directory structure for Visual Studio
 foreach(SUBDIR ${CORE_SUBDIRS} ${NONCORE_SUBDIRS})

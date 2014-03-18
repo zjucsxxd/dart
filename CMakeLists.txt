@@ -140,6 +140,16 @@ if(NOT BUILD_CORE_ONLY)
                             optimized urdfdom_world       debug urdfdom_worldd
                             optimized console_bridge      debug console_bridged)
   endif()
+
+  # SDFormat
+  find_package(SDFormat)
+  if(SDFormat_FOUND)
+    message(STATUS "Looking for SDFormat - found")
+    set(HAVE_SDFORMAT TRUE)
+  else(SDFormat_FOUND)
+    message(WARNING "SDFormat not found, for sdf parser, please install libsdformat-dev.")
+    set(HAVE_SDFORMAT FALSE)
+  endif()
 endif()
 
 include_directories(BEFORE ${PROJECT_SOURCE_DIR})
@@ -162,6 +172,9 @@ if(NOT BUILD_CORE_ONLY)
   include_directories(${urdfdom_INCLUDE_DIRS})
   include_directories(${TinyXML_INCLUDE_DIRS})
   include_directories(${TinyXML2_INCLUDE_DIRS})
+  if(HAVE_SDFORMAT)
+    include_directories(${SDFormat_INCLUDE_DIRS})
+  endif()
 endif()
 
 include_directories("${CMAKE_BINARY_DIR}")
@@ -187,6 +200,9 @@ if(NOT BUILD_CORE_ONLY)
   set(DART_DEPENDENCIES ${urdfdom_LIBRARIES}
                         ${TinyXML_LIBRARIES}
                         ${TinyXML2_LIBRARIES})
+  if(HAVE_SDFORMAT)
+    set(DART_DEPENDENCIES ${DART_DEPENDENCIES} ${SDFormat_LIBRARIES})
+  endif()
 endif()
 
 ###############
@@ -298,6 +314,9 @@ if(HAVE_IPOPT)
 endif()
 if(HAVE_BULLET_COLLISION)
   set(CPACK_DEBIAN_PACKAGE_DEPENDS ${CPACK_DEBIAN_PACKAGE_DEPENDS} "libbullet-dev (>=2.8.0)")
+endif()
+if(HAVE_SDFORMAT)
+  set(CPACK_DEBIAN_PACKAGE_DEPENDS ${CPACK_DEBIAN_PACKAGE_DEPENDS} "libsdformat-dev")
 endif()
 
 set(CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
