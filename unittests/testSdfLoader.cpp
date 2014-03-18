@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Georgia Tech Research Corporation
+ * Copyright (c) 2014, Georgia Tech Research Corporation
  * All rights reserved.
  *
  * Author(s): Jeongseok Lee <jslee02@gmail.com>
@@ -34,12 +34,12 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "dart/config.h"
-#ifdef HAVE_SDFORMAT
-
 #include <iostream>
 #include <gtest/gtest.h>
 #include "TestHelpers.h"
+
+#include "dart/config.h"
+#ifdef HAVE_SDFORMAT
 
 #include "dart/dynamics/SoftBodyNode.h"
 #include "dart/dynamics/RevoluteJoint.h"
