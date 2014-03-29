@@ -79,6 +79,7 @@ class SkelParser
 public:
     /// @brief
     static simulation::World* readSkelFile(const std::string& _filename);
+    static dynamics::Skeleton* readSkeleton(const std::string& _filename);
 
 private:
     struct SkelBodyNode
@@ -91,10 +92,9 @@ private:
     /// @brief
     static simulation::World* readWorld(tinyxml2::XMLElement* _worldElement);
 
+
     /// @brief
-    static dynamics::Skeleton* readSkeleton(
-            tinyxml2::XMLElement* _skeletonElement,
-            simulation::World* _world);
+    static dynamics::Skeleton* readSkeleton(tinyxml2::XMLElement* _skeletonElement);
 
     /// @brief
     static SkelBodyNode readBodyNode(

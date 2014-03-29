@@ -135,21 +135,41 @@ simulation::World* SkelParser::readWorld(tinyxml2::XMLElement* _worldElement)
     ElementEnumerator skeletonElements(_worldElement, "skeleton");
     while (skeletonElements.next())
     {
-        dynamics::Skeleton* newSkeleton
-                = readSkeleton(skeletonElements.get(), newWorld);
-
+        dynamics::Skeleton* newSkeleton = readSkeleton(skeletonElements.get());
         newWorld->addSkeleton(newSkeleton);
     }
 
     return newWorld;
 }
 
-dynamics::Skeleton* SkelParser::readSkeleton(
-        tinyxml2::XMLElement* _skeletonElement,
-        simulation::World* _world)
+dynamics::Skeleton* SkelParser::readSkeleton(const std::string& _filename)
 {
+    tinyxml2::XMLDocument _dartFile;
+    try {
+        openXMLFile(_dartFile, _filename.c_str());
+    }
+    catch(std::exception const& e) {
+        std::cout << "LoadFile Fails: " << e.what() << std::endl;
+        return NULL;
+    }
+    // Load Skel file
+    tinyxml2::XMLElement* skeElement = NULL;
+    skeElement = _dartFile.FirstChildElement("skel");
+    if (skeElement == NULL)
+        return NULL;
+    // Load skeleton
+    tinyxml2::XMLElement* skeletonElement = NULL;
+    skeletonElement = skeElement->FirstChildElement("skeleton");
+    if (skeletonElement == NULL)
+        return NULL;
+    dynamics::Skeleton* newSkeleton = readSkeleton(skeletonElement);
+    return newSkeleton;
+}
+
+
+dynamics::Skeleton* SkelParser::readSkeleton(tinyxml2::XMLElement* _skeletonElement) {
+
     assert(_skeletonElement != NULL);
-    assert(_world != NULL);
 
     dynamics::Skeleton* newSkeleton = new dynamics::Skeleton;
     Eigen::Isometry3d skeletonFrame = Eigen::Isometry3d::Identity();
