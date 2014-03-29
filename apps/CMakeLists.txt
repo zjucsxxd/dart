@@ -5,7 +5,7 @@ set_property(DIRECTORY PROPERTY FOLDER Apps)
 foreach(APPDIR
         Galileo
         tinkertoy
-        rigidBodies
+        rigidBodies_clay
         fluid
 	)
     add_subdirectory(${APPDIR})
