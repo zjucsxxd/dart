@@ -70,14 +70,17 @@ public:
               const Eigen::Vector4d& _color = Eigen::Vector4d::Identity(),
               bool _useDefaultColor = true) const;
 
-    /// @brief
-    const Eigen::Vector3d& getLocalPosition() const;
+    /// @brief Get body node this marker belongs to
+    BodyNode* getBodyNode() const;
 
     /// @brief
-    void setLocalPosition(Eigen::Vector3d& _offset);
+    const Eigen::Vector3d& getLocalCoords() const;
 
-    /// @brief Get position w.r.t. world frame
-    Eigen::Vector3d getWorldPosition() const;
+    /// @brief
+    void setLocalCoords(Eigen::Vector3d& _offset);
+
+    /// @brief Get coordinates w.r.t. world frame
+    Eigen::Vector3d getWorldCoords() const;
 
     /// @brief
     int getSkeletonIndex() const;

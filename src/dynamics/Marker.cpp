@@ -94,17 +94,22 @@ void Marker::draw(renderer::RenderInterface* _ri, bool _offset,
     _ri->popName();
 }
 
-const Eigen::Vector3d& Marker::getLocalPosition() const
+BodyNode* Marker::getBodyNode() const
+{
+    return mBodyNode;
+}
+
+const Eigen::Vector3d& Marker::getLocalCoords() const
 {
     return mOffset;
 }
 
-void Marker::setLocalPosition(Eigen::Vector3d& _offset)
+void Marker::setLocalCoords(Eigen::Vector3d& _offset)
 {
     mOffset = _offset;
 }
 
-Eigen::Vector3d Marker::getWorldPosition() const
+Eigen::Vector3d Marker::getWorldCoords() const
 {
     return mBodyNode->getWorldTransform() * mOffset;
 }
