@@ -70,6 +70,9 @@ public:
     AxisOrder getAxisOrder() const;
 
     // Documentation inherited.
+    virtual Eigen::Matrix4d getLocalTransformDeriv(int _index) const;
+
+    // Documentation inherited.
     virtual void updateTransform();
 
     // Documentation inherited.

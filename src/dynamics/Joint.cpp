@@ -78,6 +78,11 @@ const Eigen::Isometry3d&Joint::getLocalTransform() const
     return mT;
 }
 
+Eigen::Matrix4d Joint::getLocalTransformDeriv(int _index) const
+{
+    return Eigen::Matrix4d::Zero();
+}
+
 const math::Jacobian&Joint::getLocalJacobian() const
 {
     return mS;
