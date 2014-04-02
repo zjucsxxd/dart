@@ -78,6 +78,9 @@ public:
     // Documentation inherited.
     virtual void updateJacobianTimeDeriv();
 
+    virtual Eigen::Isometry3d getTransform(size_t _index) const;
+
+
 protected:
     /// @brief Euler angles X, Y, Z
     GenCoord mCoordinate[3];

@@ -158,6 +158,11 @@ public:
     //--------------------------------------------------------------------------
     void applyGLTransform(renderer::RenderInterface* _ri);
 
+    virtual Eigen::Isometry3d getTransform(size_t _index) const {
+        Eigen::Isometry3d a = Eigen::Isometry3d::Identity();
+        return a;
+    }
+
 protected:
     /// @brief
     /// q --> T(q)

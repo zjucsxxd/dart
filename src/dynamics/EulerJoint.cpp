@@ -230,5 +230,32 @@ inline void EulerJoint::updateJacobianTimeDeriv()
     mdS.col(2) = math::AdT(mT_ChildBodyToJoint, dJ2);
 }
 
+Eigen::Isometry3d EulerJoint::getTransform(size_t _index) const
+{
+ assert(_index < 3);
+
+ Eigen::Vector3d q = Eigen::Vector3d::Zero();
+ q[_index] = mGenCoords[_index]->get_q();
+
+ switch (mAxisOrder)
+ {
+   case AO_XYZ:
+   {
+     return Eigen::Isometry3d(math::eulerXYZToMatrix(q));
+     break;
+   }
+   case AO_ZYX:
+   {
+     return Eigen::Isometry3d(math::eulerZYXToMatrix(q));
+     break;
+   }
+   default:
+   {
+     dterr << "Undefined Euler axis order\n";
+     break;
+   }
+ }
+}
+
 } // namespace dynamics
 } // namespace dart

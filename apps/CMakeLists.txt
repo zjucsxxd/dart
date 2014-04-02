@@ -3,11 +3,11 @@ set_property(DIRECTORY PROPERTY FOLDER Apps)
 
 # List of all the subdirectories to include
 foreach(APPDIR
-        myLegIK
         Galileo
         tinkertoy
-        rigidBodies_clay
+        rigidBodies
         fluid
+        twister
 	)
     add_subdirectory(${APPDIR})
     if(WIN32)

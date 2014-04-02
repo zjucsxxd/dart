@@ -243,6 +243,7 @@ dynamics::Skeleton* SkelParser::readSkeleton(tinyxml2::XMLElement* _skeletonElem
          it != skelBodyNodes.end(); ++it)
         newSkeleton->addBodyNode((*it).bodyNode);
 
+    newSkeleton->init();
     return newSkeleton;
 }
 
