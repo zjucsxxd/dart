@@ -99,6 +99,10 @@ public:
     /// @brief
     const Eigen::Isometry3d& getLocalTransform() const;
 
+    /// @brief Get derivative of local transformation w.r.t. _index-th
+    /// coordinate
+    virtual Eigen::Matrix4d getTransformDerivative(int _index) const;
+
     /// @brief
     const math::Jacobian& getLocalJacobian() const;
 

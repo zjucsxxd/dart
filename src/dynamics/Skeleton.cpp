@@ -208,6 +208,21 @@ Joint* Skeleton::getJoint(const std::string& _name) const
     return NULL;
 }
 
+Marker* Skeleton::getMarker(int _idx)
+{
+    for (std::vector<BodyNode*>::const_iterator it = mBodyNodes.begin();
+         it != mBodyNodes.end(); ++it)
+    {
+        for (int i = 0; i < (*it)->getNumMarkers(); ++i)
+        {
+            if ((*it)->getMarker(i)->getID() == _idx)
+                return (*it)->getMarker(i);
+        }
+    }
+
+    return NULL;
+}
+
 Marker* Skeleton::getMarker(const std::string& _name) const
 {
     assert(!_name.empty());
