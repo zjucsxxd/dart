@@ -74,7 +74,7 @@ Eigen::Matrix4d TranslationalJoint::getTransformDerivative(size_t _index) const
     assert(_index < 3);
 
     Eigen::Matrix4d ret = Eigen::Matrix4d::Zero();
-    ret(3, _index) = 1.0;
+    ret(_index, 3) = 1.0;
 
     return ret;
 }

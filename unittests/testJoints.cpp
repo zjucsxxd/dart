@@ -68,6 +68,8 @@ class JOINTS : public testing::Test
 {
 public:
     void kinematicsTest(Joint* _joint);
+
+    void cs4496Test(Joint* _joint);
 };
 
 /******************************************************************************/
@@ -333,6 +335,113 @@ TEST_F(JOINTS, POSITION_LIMIT)
 
     EXPECT_NEAR(jointVel0, 0.0, tol);
     EXPECT_NEAR(jointVel1, 0.0, tol);
+}
+
+
+/******************************************************************************/
+void JOINTS::cs4496Test(Joint* _joint)
+{
+    BodyNode bodyNode;
+    bodyNode.setParentJoint(_joint);
+
+    Skeleton skeleton;
+    skeleton.addBodyNode(&bodyNode);
+    skeleton.init();
+
+    int dof = _joint->getNumGenCoords();
+
+    //--------------------------------------------------------------------------
+    //
+    //--------------------------------------------------------------------------
+    VectorXd q = VectorXd::Zero(dof);
+    VectorXd dq = VectorXd::Zero(dof);
+    VectorXd ddq = VectorXd::Zero(dof);
+
+    for (int idxTest = 0; idxTest < 100; ++idxTest)
+    {
+        double deltaQ = 0.000001;
+
+        for (int i = 0; i < dof; ++i)
+        {
+            q(i) = random(-DART_PI, DART_PI);
+            dq(i) = random(-DART_PI, DART_PI);
+            ddq(i) = random(-DART_PI, DART_PI);
+        }
+
+        _joint->set_q(q);
+        _joint->set_dq(dq);
+        _joint->set_ddq(ddq);
+
+        bodyNode.updateTransform();
+        bodyNode.updateVelocity();
+        bodyNode.updateEta();
+        bodyNode.updateAcceleration();
+
+        if (_joint->getNumGenCoords() == 0)
+            return;
+
+        Eigen::Isometry3d T = _joint->getLocalTransform();
+        Jacobian J = _joint->getLocalJacobian();
+        Jacobian dJ = _joint->getLocalJacobianTimeDeriv();
+
+        //--------------------------------------------------------------------------
+        // Test analytic Jacobian and numerical Jacobian
+        // J == numericalJ
+        //--------------------------------------------------------------------------
+        for (int i = 0; i < dof; ++i)
+        {
+            // a
+            Eigen::VectorXd q_a = q;
+            _joint->set_q(q_a);
+            bodyNode.updateTransform();
+            Eigen::Isometry3d T_a = _joint->getTransform(i);
+
+            // b
+            Eigen::VectorXd q_b = q;
+            q_b(i) += deltaQ;
+            _joint->set_q(q_b);
+            bodyNode.updateTransform();
+            Eigen::Isometry3d T_b = _joint->getTransform(i);
+
+            // dTdq
+            Eigen::Matrix4d T_a_eigen = T_a.matrix();
+            Eigen::Matrix4d T_b_eigen = T_b.matrix();
+            Eigen::Matrix4d dTdq_eigen = (T_b_eigen - T_a_eigen) / deltaQ;
+
+            // Correct dTdq
+            Eigen::Matrix4d dTdqCorrect = _joint->getTransformDerivative(i);
+
+            EXPECT_TRUE(equals(dTdq_eigen, dTdqCorrect));
+
+            if (!equals(dTdq_eigen, dTdqCorrect))
+            {
+                std::cout << "dof: " << dof << std::endl;
+                std::cout << "dTdq_eigen:" << std::endl << dTdq_eigen << std::endl;
+                std::cout << "dTdqCorrect:" << std::endl << dTdqCorrect << std::endl;
+            }
+        }
+    }
+}
+
+// 1-dof joint
+TEST_F(JOINTS, CS4496)
+{
+    RevoluteJoint* revJoint = new RevoluteJoint;
+    cs4496Test(revJoint);
+
+    UniversalJoint* univJoint = new UniversalJoint;
+    cs4496Test(univJoint);
+
+    EulerJoint* eulerJoint1 = new EulerJoint;
+    eulerJoint1->setAxisOrder(EulerJoint::AO_XYZ);
+    cs4496Test(eulerJoint1);
+
+    EulerJoint* eulerJoint2 = new EulerJoint;
+    eulerJoint2->setAxisOrder(EulerJoint::AO_ZYX);
+    cs4496Test(eulerJoint2);
+
+    TranslationalJoint* translationalJoint = new TranslationalJoint;
+    cs4496Test(translationalJoint);
 }
 
 /******************************************************************************/
