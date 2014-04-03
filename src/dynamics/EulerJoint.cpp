@@ -82,22 +82,46 @@ Eigen::Matrix4d EulerJoint::getTransformDerivative(int _index) const
 
     Eigen::Matrix4d ret = Eigen::Matrix4d::Zero();
 
-    switch (_index)
+    switch (mAxisOrder)
         {
-        case 0:
-            ret.topLeftCorner<3, 3>() = math::eulerToMatrixXDeriv(mCoordinate[0].get_q());
+        case AO_XYZ:
+            switch (_index)
+                {
+                case 0:
+                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixXDeriv(mCoordinate[0].get_q());
                                         
+                    break;
+                case 1:
+                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixYDeriv(mCoordinate[1].get_q());
+                    break;
+                case 2:
+                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixZDeriv(mCoordinate[2].get_q());
+                    break;
+                default:
+                    break;
+                }    
             break;
-        case 1:
-            ret.topLeftCorner<3, 3>() = math::eulerToMatrixYDeriv(mCoordinate[1].get_q());
-            break;
-        case 2:
-            ret.topLeftCorner<3, 3>() = math::eulerToMatrixZDeriv(mCoordinate[2].get_q());
+        case AO_ZYX:
+            switch (_index)
+                {
+                case 0:
+                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixZDeriv(mCoordinate[0].get_q());
+                                        
+                    break;
+                case 1:
+                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixYDeriv(mCoordinate[1].get_q());
+                    break;
+                case 2:
+                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixXDeriv(mCoordinate[2].get_q());
+                    break;
+                default:
+                    break;
+                }    
             break;
         default:
+            dterr << "Undefined Euler axis order\n";
             break;
-        }    
-    
+        }
     return ret;
 }
 
