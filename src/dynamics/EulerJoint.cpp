@@ -72,56 +72,83 @@ EulerJoint::AxisOrder EulerJoint::getAxisOrder() const
     return mAxisOrder;
 }
 
-Eigen::Matrix4d EulerJoint::getTransformDerivative(int _index) const
+Eigen::Isometry3d EulerJoint::getTransform(size_t _index) const
 {
-    assert(0 <= _index && _index < 3);
+    assert(_index < 3);
 
-    double q0 = mCoordinate[0].get_q();
-    double q1 = mCoordinate[1].get_q();
-    double q2 = mCoordinate[2].get_q();
+    Eigen::Vector3d q = Eigen::Vector3d::Zero();
+    q[_index] = mGenCoords[_index]->get_q();
+
+    switch (mAxisOrder)
+    {
+        case AO_XYZ:
+        {
+            return Eigen::Isometry3d(math::eulerXYZToMatrix(q));
+            break;
+        }
+        case AO_ZYX:
+        {
+            return Eigen::Isometry3d(math::eulerZYXToMatrix(q));
+            break;
+        }
+        default:
+        {
+            dterr << "Undefined Euler axis order\n";
+            return Eigen::Isometry3d::Identity();
+            break;
+        }
+    }
+}
+
+Eigen::Matrix4d EulerJoint::getTransformDerivative(size_t _index) const
+{
+    assert(_index < 3);
+
+    const double q0 = mCoordinate[0].get_q();
+    const double q1 = mCoordinate[1].get_q();
+    const double q2 = mCoordinate[2].get_q();
 
     Eigen::Matrix4d ret = Eigen::Matrix4d::Zero();
 
     switch (mAxisOrder)
-        {
+    {
         case AO_XYZ:
             switch (_index)
-                {
+            {
                 case 0:
-                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixXDeriv(mCoordinate[0].get_q());
-                                        
+                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixXDeriv(q0);
                     break;
                 case 1:
-                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixYDeriv(mCoordinate[1].get_q());
+                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixYDeriv(q1);
                     break;
                 case 2:
-                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixZDeriv(mCoordinate[2].get_q());
+                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixZDeriv(q2);
                     break;
                 default:
                     break;
-                }    
+            }
             break;
         case AO_ZYX:
             switch (_index)
-                {
+            {
                 case 0:
-                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixZDeriv(mCoordinate[0].get_q());
-                                        
+                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixZDeriv(q0);
                     break;
                 case 1:
-                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixYDeriv(mCoordinate[1].get_q());
+                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixYDeriv(q1);
                     break;
                 case 2:
-                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixXDeriv(mCoordinate[2].get_q());
+                    ret.topLeftCorner<3, 3>() = math::eulerToMatrixXDeriv(q2);
                     break;
                 default:
                     break;
-                }    
+            }
             break;
         default:
             dterr << "Undefined Euler axis order\n";
             break;
-        }
+    }
+
     return ret;
 }
 
@@ -354,33 +381,6 @@ inline void EulerJoint::updateJacobianTimeDeriv()
     mdS.col(0) = math::AdT(mT_ChildBodyToJoint, dJ0);
     mdS.col(1) = math::AdT(mT_ChildBodyToJoint, dJ1);
     mdS.col(2) = math::AdT(mT_ChildBodyToJoint, dJ2);
-}
-
-Eigen::Isometry3d EulerJoint::getTransform(size_t _index) const
-{
- assert(_index < 3);
-
- Eigen::Vector3d q = Eigen::Vector3d::Zero();
- q[_index] = mGenCoords[_index]->get_q();
-
- switch (mAxisOrder)
- {
-   case AO_XYZ:
-   {
-     return Eigen::Isometry3d(math::eulerXYZToMatrix(q));
-     break;
-   }
-   case AO_ZYX:
-   {
-     return Eigen::Isometry3d(math::eulerZYXToMatrix(q));
-     break;
-   }
-   default:
-   {
-     dterr << "Undefined Euler axis order\n";
-     break;
-   }
- }
 }
 
 } // namespace dynamics

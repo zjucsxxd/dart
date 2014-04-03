@@ -70,7 +70,10 @@ public:
     AxisOrder getAxisOrder() const;
 
     // Documentation inherited.
-    virtual Eigen::Matrix4d getTransformDerivative(int _index) const;
+    virtual Eigen::Isometry3d getTransform(size_t _index) const;
+
+    // Documentation inherited.
+    virtual Eigen::Matrix4d getTransformDerivative(size_t _index) const;
 
     // Documentation inherited.
     virtual void updateTransform();
@@ -80,9 +83,6 @@ public:
 
     // Documentation inherited.
     virtual void updateJacobianTimeDeriv();
-
-    virtual Eigen::Isometry3d getTransform(size_t _index) const;
-
 
 protected:
     /// @brief Euler angles X, Y, Z

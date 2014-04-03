@@ -56,6 +56,12 @@ public:
     virtual ~TranslationalJoint();
 
     // Documentation inherited.
+    virtual Eigen::Isometry3d getTransform(size_t _index) const;
+
+    // Documentation inherited.
+    virtual Eigen::Matrix4d getTransformDerivative(size_t _index) const;
+
+    // Documentation inherited.
     virtual void updateTransform();
 
     // Documentation inherited.

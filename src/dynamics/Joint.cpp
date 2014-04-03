@@ -78,7 +78,12 @@ const Eigen::Isometry3d&Joint::getLocalTransform() const
     return mT;
 }
 
-Eigen::Matrix4d Joint::getTransformDerivative(int _index) const
+Eigen::Isometry3d Joint::getTransform(size_t /*_index*/) const
+{
+    return Eigen::Isometry3d::Identity();
+}
+
+Eigen::Matrix4d Joint::getTransformDerivative(size_t /*_index*/) const
 {
     return Eigen::Matrix4d::Zero();
 }

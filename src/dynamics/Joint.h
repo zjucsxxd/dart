@@ -99,9 +99,11 @@ public:
     /// @brief
     const Eigen::Isometry3d& getLocalTransform() const;
 
-    /// @brief Get derivative of local transformation w.r.t. _index-th
-    /// coordinate
-    virtual Eigen::Matrix4d getTransformDerivative(int _index) const;
+    /// @brief Get transformation of _index-th coordinate
+    virtual Eigen::Isometry3d getTransform(size_t _index) const;
+
+    /// @brief Get derivative of transformation of _index-th coordinate
+    virtual Eigen::Matrix4d getTransformDerivative(size_t _index) const;
 
     /// @brief
     const math::Jacobian& getLocalJacobian() const;
@@ -161,11 +163,6 @@ public:
     //
     //--------------------------------------------------------------------------
     void applyGLTransform(renderer::RenderInterface* _ri);
-
-    virtual Eigen::Isometry3d getTransform(size_t _index) const {
-        Eigen::Isometry3d a = Eigen::Isometry3d::Identity();
-        return a;
-    }
 
 protected:
     /// @brief
