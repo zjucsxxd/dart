@@ -132,7 +132,7 @@ public:
     Joint* getJoint(const std::string& _name) const;
 
     /// @brief
-    Marker* getMarker(int _i);
+    Marker* getMarker(int _idx);
 
     /// @brief
     Marker* getMarker(const std::string& _name) const;
