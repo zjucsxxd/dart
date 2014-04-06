@@ -21,6 +21,8 @@ MyWorld::~MyWorld() {
 }
 
 void MyWorld::solve() {
+    if (mConstrainedMarker == -1)
+        return; 
     int numIter = 300;
     double alpha = 0.01;
     int nDof = mSkel->getNumGenCoords();
@@ -33,6 +35,7 @@ void MyWorld::solve() {
     }
 }
 
+// Current code only works for the left ankle
 VectorXd MyWorld::updateGradients() {
     // compute c(q)
     mC = mSkel->getMarker(mConstrainedMarker)->getWorldCoords() - mTarget;
@@ -61,17 +64,19 @@ VectorXd MyWorld::updateGradients() {
     return gradients;
 }
 
-// TODO: Current code can only handle one constraint at the left foot.
+// TODO: Current code only handlse one constraint aon the left foot.
 void MyWorld::createConstraint(int _index) {
     if (_index == 3) {
-        mConstrainedMarker = _index;
         mTarget = mSkel->getMarker(_index)->getWorldCoords();
+        mConstrainedMarker = 3;
+    } else {
+        mConstrainedMarker = -1;
     }
 }
 
 void MyWorld::modifyConstraint(Vector3d _deltaP) {
-    mTarget += _deltaP;
-
+    if (mConstrainedMarker == 3)
+        mTarget += _deltaP;
 }
 
 void MyWorld::removeConstraint(int _index) {

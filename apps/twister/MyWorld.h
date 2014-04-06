@@ -24,8 +24,8 @@ class MyWorld {
     dart::dynamics::Skeleton *mSkel;
     Eigen::Vector3d mC;
     Eigen::MatrixXd mJ;
-    Eigen::Vector3d mTarget;
-    int mConstrainedMarker;
+    Eigen::Vector3d mTarget; // The target location of the constriant
+    int mConstrainedMarker; // The index of the constrained marker
 };
 
 #endif
