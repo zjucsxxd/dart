@@ -12,8 +12,8 @@ public:
         mBackground[2] = 1.0;
         mBackground[3] = 1.0;		
         mPersp = 30.f;
-        mTrans[1] = 400.f;
-        mZoom = 0.5;
+        mTrans[1] = 200.f;
+        mZoom = 0.3;
 
         mActiveMarker = -1;
     }

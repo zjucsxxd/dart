@@ -20,7 +20,9 @@ void MyWindow::draw()
     // Draw the body nodes of the skeleton.
     mWorld->getSkel()->draw(mRI);
     // Draw the markers on the skeleton.
-    mWorld->getSkel()->drawMarkers(mRI);
+    Vector4d color;
+    color << 0.95, 0.25, 0.25, 1.0;
+    mWorld->getSkel()->drawMarkers(mRI, color, false);
  
 }
 

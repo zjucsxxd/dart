@@ -12,6 +12,7 @@ using namespace dart::dynamics;
 MyWorld::MyWorld() {
     // Load a skeleton from file
     mSkel = dart::utils::SkelParser::readSkeleton(DART_DATA_PATH"skel/human.skel");
+    // Assume that there is only one constraint
     mJ = MatrixXd::Zero(3, mSkel->getNumGenCoords());    
     mConstrainedMarker = -1;
 }
@@ -64,7 +65,7 @@ VectorXd MyWorld::updateGradients() {
     return gradients;
 }
 
-// TODO: Current code only handlse one constraint aon the left foot.
+// Current code only handlse one constraint on the left foot.
 void MyWorld::createConstraint(int _index) {
     if (_index == 3) {
         mTarget = mSkel->getMarker(_index)->getWorldCoords();
