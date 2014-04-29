@@ -45,7 +45,7 @@ namespace dart {
 namespace dynamics {
 
 EulerJoint::EulerJoint(const std::string& _name)
-    : Joint(EULER, "EulerXYZ joint"),
+    : Joint(EULER, "_name"),
       mAxisOrder(AO_XYZ)
 {
     mGenCoords.push_back(&mCoordinate[0]);

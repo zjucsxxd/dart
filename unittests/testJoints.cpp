@@ -50,6 +50,7 @@
 #include "dynamics/UniversalJoint.h"
 #include "dynamics/WeldJoint.h"
 #include "dynamics/EulerJoint.h"
+#include "dynamics/TransEulerJoint.h"
 #include "dynamics/ScrewJoint.h"
 #include "dynamics/BodyNode.h"
 #include "dynamics/Skeleton.h"
@@ -281,6 +282,14 @@ TEST_F(JOINTS, FREE_JOINT)
     kinematicsTest(freeJoint);
 }
 
+// 6-dof joint
+TEST_F(JOINTS, EULER_FREE_JOINT)
+{
+    TransEulerJoint* eulerFreeJoint = new TransEulerJoint;
+
+    kinematicsTest(eulerFreeJoint);
+}
+
 TEST_F(JOINTS, POSITION_LIMIT)
 {
     double tol = 1e-4;
@@ -385,6 +394,12 @@ void JOINTS::cs4496Test(Joint* _joint)
         Jacobian dJ = _joint->getLocalJacobianTimeDeriv();
 
         //--------------------------------------------------------------------------
+        // Test transformation
+        //--------------------------------------------------------------------------
+
+
+
+        //--------------------------------------------------------------------------
         // Test analytic Jacobian and numerical Jacobian
         // J == numericalJ
         //--------------------------------------------------------------------------
@@ -442,6 +457,14 @@ TEST_F(JOINTS, CS4496)
 
     TranslationalJoint* translationalJoint = new TranslationalJoint;
     cs4496Test(translationalJoint);
+
+    TransEulerJoint* eulerFreeJoint1 = new TransEulerJoint;
+    eulerFreeJoint1->setAxisOrder(TransEulerJoint::AO_XYZ);
+    cs4496Test(eulerFreeJoint1);
+
+//    EulerFreeJoint* eulerFreeJoint2 = new EulerFreeJoint;
+//    eulerFreeJoint2->setAxisOrder(EulerFreeJoint::AO_ZYX);
+    //cs4496Test(eulerFreeJoint2);
 }
 
 /******************************************************************************/

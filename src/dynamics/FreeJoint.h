@@ -56,6 +56,12 @@ public:
     virtual ~FreeJoint();
 
     // Documentation inherited.
+    virtual Eigen::Isometry3d getTransform(size_t _index) const;
+
+    // Documentation inherited.
+    virtual Eigen::Matrix4d getTransformDerivative(size_t _index) const;
+
+    // Documentation inherited.
     virtual void updateTransform();
 
     /// @brief TODO(JS): This is workaround for Issue #122.

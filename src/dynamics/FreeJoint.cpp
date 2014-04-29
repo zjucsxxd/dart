@@ -64,22 +64,47 @@ FreeJoint::~FreeJoint()
 {
 }
 
+Eigen::Isometry3d FreeJoint::getTransform(size_t _index) const
+{
+    assert(_index < 6);
+
+    if (_index < 3)
+    {
+        Eigen::Vector3d q = Eigen::Vector3d::Zero();
+        q[_index] = mGenCoords[_index]->get_q();
+
+        return Eigen::Isometry3d(Eigen::Translation3d(q));
+    }
+    else
+    {
+        Eigen::Vector3d q2(mCoordinate[3].get_q(),
+                      mCoordinate[4].get_q(),
+                      mCoordinate[5].get_q());
+    }
+}
+
+Eigen::Matrix4d FreeJoint::getTransformDerivative(size_t _index) const
+{
+    assert(_index < 6);
+
+}
+
 void FreeJoint::updateTransform()
 {
     Eigen::Vector3d q1(mCoordinate[0].get_q(),
                        mCoordinate[1].get_q(),
                        mCoordinate[2].get_q());
     Eigen::Vector3d q2(mCoordinate[3].get_q(),
-                  mCoordinate[4].get_q(),
-                  mCoordinate[5].get_q());
+                       mCoordinate[4].get_q(),
+                       mCoordinate[5].get_q());
 
     // TODO(JS): This is workaround for Issue #122.
     mT_Joint = math::expMap(get_q());
 
     mT = mT_ParentBodyToJoint *
-            Eigen::Translation3d(q2) *
-            math::expAngular(q1) *
-            mT_ChildBodyToJoint.inverse();
+         Eigen::Translation3d(q2) *
+         math::expAngular(q1) *
+         mT_ChildBodyToJoint.inverse();
 
     assert(math::verifyTransform(mT));
 }
