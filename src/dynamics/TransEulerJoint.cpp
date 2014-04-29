@@ -280,9 +280,29 @@ void TransEulerJoint::updateJacobian()
     mS.col(0) = math::AdT(mT_ChildBodyToJoint, J0);
     mS.col(1) = math::AdT(mT_ChildBodyToJoint, J1);
     mS.col(2) = math::AdT(mT_ChildBodyToJoint, J2);
-    mS.col(3) = math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerXYZToMatrix(q)).inverse(), J3);
-    mS.col(4) = math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerXYZToMatrix(q)).inverse(), J4);
-    mS.col(5) = math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerXYZToMatrix(q)).inverse(), J5);
+
+    switch (mAxisOrder)
+    {
+    case AO_XYZ:
+    {
+        mS.col(3) = math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerXYZToMatrix(q)).inverse(), J3);
+        mS.col(4) = math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerXYZToMatrix(q)).inverse(), J4);
+        mS.col(5) = math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerXYZToMatrix(q)).inverse(), J5);
+        break;
+    }
+    case AO_ZYX:
+    {
+        mS.col(3) = math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerZYXToMatrix(q)).inverse(), J3);
+        mS.col(4) = math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerZYXToMatrix(q)).inverse(), J4);
+        mS.col(5) = math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerZYXToMatrix(q)).inverse(), J5);
+        break;
+    }
+    default:
+    {
+        dterr << "Undefined Euler axis order\n";
+        break;
+    }
+    }
 }
 
 void TransEulerJoint::updateJacobianTimeDeriv()
@@ -364,9 +384,28 @@ void TransEulerJoint::updateJacobianTimeDeriv()
     mdS.col(0) = math::AdT(mT_ChildBodyToJoint, dJ0);
     mdS.col(1) = math::AdT(mT_ChildBodyToJoint, dJ1);
     mdS.col(2) = math::AdT(mT_ChildBodyToJoint, dJ2);
-    mdS.col(3) = -math::ad(mS.leftCols<3>() * get_dq().head<3>(), math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerXYZToMatrix(q)).inverse(), dJ3));
-    mdS.col(4) = -math::ad(mS.leftCols<3>() * get_dq().head<3>(), math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerXYZToMatrix(q)).inverse(), dJ4));
-    mdS.col(5) = -math::ad(mS.leftCols<3>() * get_dq().head<3>(), math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerXYZToMatrix(q)).inverse(), dJ5));
+    switch (mAxisOrder)
+    {
+    case AO_XYZ:
+    {
+        mdS.col(3) = -math::ad(mS.leftCols<3>() * get_dq().head<3>(), math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerXYZToMatrix(q)).inverse(), dJ3));
+        mdS.col(4) = -math::ad(mS.leftCols<3>() * get_dq().head<3>(), math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerXYZToMatrix(q)).inverse(), dJ4));
+        mdS.col(5) = -math::ad(mS.leftCols<3>() * get_dq().head<3>(), math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerXYZToMatrix(q)).inverse(), dJ5));
+        break;
+    }
+    case AO_ZYX:
+    {
+        mdS.col(3) = -math::ad(mS.leftCols<3>() * get_dq().head<3>(), math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerZYXToMatrix(q)).inverse(), dJ3));
+        mdS.col(4) = -math::ad(mS.leftCols<3>() * get_dq().head<3>(), math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerZYXToMatrix(q)).inverse(), dJ4));
+        mdS.col(5) = -math::ad(mS.leftCols<3>() * get_dq().head<3>(), math::AdT(mT_ChildBodyToJoint * Eigen::Isometry3d(math::eulerZYXToMatrix(q)).inverse(), dJ5));
+        break;
+    }
+    default:
+    {
+        dterr << "Undefined Euler axis order\n";
+        break;
+    }
+    }
 }
 
 } // namespace dynamics

@@ -458,13 +458,13 @@ TEST_F(JOINTS, CS4496)
     TranslationalJoint* translationalJoint = new TranslationalJoint;
     cs4496Test(translationalJoint);
 
-    TransEulerJoint* eulerFreeJoint1 = new TransEulerJoint;
-    eulerFreeJoint1->setAxisOrder(TransEulerJoint::AO_XYZ);
-    cs4496Test(eulerFreeJoint1);
+    TransEulerJoint* transEulerJoint1 = new TransEulerJoint;
+    transEulerJoint1->setAxisOrder(TransEulerJoint::AO_XYZ);
+    cs4496Test(transEulerJoint1);
 
-//    EulerFreeJoint* eulerFreeJoint2 = new EulerFreeJoint;
-//    eulerFreeJoint2->setAxisOrder(EulerFreeJoint::AO_ZYX);
-    //cs4496Test(eulerFreeJoint2);
+    TransEulerJoint* transEulerJoint2 = new TransEulerJoint;
+    transEulerJoint2->setAxisOrder(TransEulerJoint::AO_ZYX);
+    cs4496Test(transEulerJoint2);
 }
 
 /******************************************************************************/
