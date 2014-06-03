@@ -1,0 +1,26 @@
+var Helpers_8h =
+[
+    [ "acosech", "db/df1/Helpers_8h.html#a4d0c4511a8ead15fb3b6ddc00b474b80", null ],
+    [ "acosh", "db/df1/Helpers_8h.html#a5c44bf9370aa09e62340dd61475c11be", null ],
+    [ "acotanh", "db/df1/Helpers_8h.html#ad7e59127fc4e27b67a6851eb785591c7", null ],
+    [ "asech", "db/df1/Helpers_8h.html#ad24a2a30d51d65525d2214ef57cb01e7", null ],
+    [ "asinh", "db/df1/Helpers_8h.html#adbdd4d2bd45b418902a972396060ab83", null ],
+    [ "atanh", "db/df1/Helpers_8h.html#a607feabb775dd93e2b935cb0fef3f712", null ],
+    [ "CR", "db/df1/Helpers_8h.html#a016887264359b2adec638f50b2f521d9", null ],
+    [ "delta", "db/df1/Helpers_8h.html#ae6aede87f5eb5a1e43f0c8421dc237fa", null ],
+    [ "isEqual", "db/df1/Helpers_8h.html#a3660a2b791e39ec186f8632c94ba0dbb", null ],
+    [ "isInf", "db/df1/Helpers_8h.html#ac722257c75263b69e7997d672ffe0126", null ],
+    [ "isInf", "db/df1/Helpers_8h.html#af1b073e98b687a9aa406af54ad68d3d2", null ],
+    [ "isInt", "db/df1/Helpers_8h.html#aecdb589c0ea301a4d55e79780479b0b3", null ],
+    [ "isNan", "db/df1/Helpers_8h.html#af5b30515f57b6a7eea27ace602bb346b", null ],
+    [ "isNan", "db/df1/Helpers_8h.html#a17ab5a7cba3e8f0f27e6b5f300c290ed", null ],
+    [ "isSymmetric", "db/df1/Helpers_8h.html#aca0a14a88fdfa483185ffa5fe66feeba", null ],
+    [ "isZero", "db/df1/Helpers_8h.html#a0ad9bb6d4eb0eeaa2f5d8181da7a0fb3", null ],
+    [ "random", "db/df1/Helpers_8h.html#aaebe9dfa697cd24a66650059b1bc743a", null ],
+    [ "round", "db/df1/Helpers_8h.html#aa69de55cf8cae77bea99419a278bf436", null ],
+    [ "round2", "db/df1/Helpers_8h.html#a897a62e960b3fe0f95a529fe911eff7d", null ],
+    [ "seedRand", "db/df1/Helpers_8h.html#a0f60c93c6ccddec2989611956bce69bb", null ],
+    [ "sgn", "db/df1/Helpers_8h.html#af3299a641f96393c7bc2dddf6a442452", null ],
+    [ "sqr", "db/df1/Helpers_8h.html#aaf35aa090d0b6f33e81c40697334df61", null ],
+    [ "Tsinc", "db/df1/Helpers_8h.html#a9f15082c7168daabbfddd223e1fe0158", null ]
+];
