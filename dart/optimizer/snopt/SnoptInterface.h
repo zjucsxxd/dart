@@ -11,11 +11,14 @@
 
 #include <vector>
 #include <Eigen/Dense>
-#include "dart/optimizer/OptimizerArrayTypes.h"
 
 #ifndef	ZERO
 #define	ZERO 1.0e-30
 #endif  // ifndef ZERO
+
+typedef std::vector<std::vector<double> * > * VVD;
+typedef std::vector<std::vector<int> * > * VVI;
+typedef std::vector<std::vector<bool> * > * VVB;
 
 namespace dart {
 namespace optimizer {

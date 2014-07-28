@@ -49,7 +49,7 @@
   #include "dart/optimizer/ipopt/IpoptSolver.h"
 #endif
 #ifdef HAVE_SNOPT
-  #include "dart/optimizer/snopt/SnoptSolver.h"
+  //#include "dart/optimizer/snopt/SnoptSolver.h"
 #endif
 
 using namespace std;

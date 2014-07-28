@@ -80,6 +80,16 @@ find_package(FCL REQUIRED)
 find_package(Assimp REQUIRED)
 find_package(OpenGL REQUIRED)
 
+# SNOPT
+find_package(SNOPT)
+if(SNOPT_FOUND)
+  message(STATUS "Looking for SNOPT - found")
+  set(HAVE_SNOPT TRUE)
+else(SNOPT_FOUND)
+  message(WARNING "SNOPT not found")
+  set(HAVE_SNOPT FALSE)
+endif()
+
 # NLOPT
 find_package(NLOPT)
 if(NLOPT_FOUND)
@@ -217,6 +227,9 @@ if(NOT BUILD_CORE_ONLY)
   set(DART_DEPENDENCIES ${urdfdom_LIBRARIES}
                         ${TinyXML_LIBRARIES}
                         ${TinyXML2_LIBRARIES})
+  if(HAVE_SNOPT)
+    set(DART_DEPENDENCIES ${DART_DEPENDENCIES} ${SNOPT_LIBRARIES})
+  endif()
   if(HAVE_NLOPT)
     set(DART_DEPENDENCIES ${DART_DEPENDENCIES} ${NLOPT_LIBRARIES})
   endif()
