@@ -1425,5 +1425,65 @@ Eigen::Matrix3d makeSkewSymmetric(const Eigen::Vector3d& _v) {
   return result;
 }
 
+//==============================================================================
+Eigen::Matrix6d AdT(const Eigen::Isometry3d& _T)
+{
+  Eigen::Matrix6d result(Eigen::Matrix6d::Zero());
+
+  const Eigen::Matrix3d& R  = _T.linear();
+  const Eigen::Matrix3d& skewP = math::makeSkewSymmetric(_T.translation());
+
+  result.topLeftCorner<3, 3>()     = R;
+  result.bottomRightCorner<3, 3>() = result.topLeftCorner<3, 3>();
+  result.bottomLeftCorner<3, 3>()  = skewP*R;
+
+  return result;
+}
+
+//==============================================================================
+Eigen::Matrix6d AdInvT(const Eigen::Isometry3d& _T)
+{
+  Eigen::Matrix6d result(Eigen::Matrix6d::Zero());
+
+  const Eigen::Matrix3d& invR  = _T.linear().transpose();
+  const Eigen::Matrix3d& skewP = math::makeSkewSymmetric(_T.translation());
+
+  result.topLeftCorner<3, 3>()     = invR;
+  result.bottomRightCorner<3, 3>() = result.topLeftCorner<3, 3>();
+  result.bottomLeftCorner<3, 3>()  = -invR*skewP;
+
+  return result;
+}
+
+//==============================================================================
+Eigen::Matrix6d dAdT(const Eigen::Isometry3d& _T)
+{
+  Eigen::Matrix6d result(Eigen::Matrix6d::Zero());
+
+  const Eigen::Matrix3d& invR  = _T.linear().transpose();
+  const Eigen::Matrix3d& skewP = math::makeSkewSymmetric(_T.translation());
+
+  result.topLeftCorner<3, 3>()     = invR;
+  result.bottomRightCorner<3, 3>() = result.topLeftCorner<3, 3>();
+  result.topRightCorner<3, 3>()  = -invR*skewP;
+
+  return result;
+}
+
+//==============================================================================
+Eigen::Matrix6d dAdInvT(const Eigen::Isometry3d& _T)
+{
+  Eigen::Matrix6d result(Eigen::Matrix6d::Zero());
+
+  const Eigen::Matrix3d& R  = _T.linear();
+  const Eigen::Matrix3d& skewP = math::makeSkewSymmetric(_T.translation());
+
+  result.topLeftCorner<3, 3>()     = R;
+  result.bottomRightCorner<3, 3>() = result.topLeftCorner<3, 3>();
+  result.topRightCorner<3, 3>()  = skewP*R;
+
+  return result;
+}
+
 }  // namespace math
 }  // namespace dart

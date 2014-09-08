@@ -319,6 +319,26 @@ typename Derived::PlainObject AdInvTJacFixed(
 Eigen::Vector6d AdInvRLinear(const Eigen::Isometry3d& _T,
                              const Eigen::Vector3d& _v);
 
+/// Return coordinate transform matrix of spatial motion vector
+/// \param[in] _invT Transformation matrix from new frame to current frame
+/// \return Coordinate transform matrix
+Eigen::Matrix6d AdT(const Eigen::Isometry3d& _T);
+
+/// Return coordinate transform matrix of spatial motion vector
+/// \param[in] _invT Transformation matrix from current frame to new frame
+/// \return Coordinate transform matrix
+Eigen::Matrix6d AdInvT(const Eigen::Isometry3d& _T);
+
+/// Return coordinate transform matrix of spatial force vector
+/// \param[in] _invT Transformation matrix from current frame to new frame
+/// \return Coordinate transform matrix
+Eigen::Matrix6d dAdT(const Eigen::Isometry3d& _T);
+
+/// Return coordinate transform matrix of spatial force vector
+/// \param[in] _invT Transformation matrix from new frame to current frame
+/// \return Coordinate transform matrix
+Eigen::Matrix6d dAdInvT(const Eigen::Isometry3d& _T);
+
 /// \brief dual adjoint mapping
 /// \note @f$Ad^{@,*}_TF = ( R^T (m - p@times f)@,,~ R^T f)@f$,
 /// where @f$T=(R,p)@in SE(3), F=(m,f)@in se(3)^*@f$.
