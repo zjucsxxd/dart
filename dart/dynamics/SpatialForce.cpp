@@ -43,6 +43,17 @@ namespace dynamics {
 
 //==============================================================================
 SpatialForce::SpatialForce()
+  : mLinearForce(Eigen::Vector3d::Zero()),
+    mMoment(Eigen::Vector3d::Zero())
+{
+
+}
+
+//==============================================================================
+SpatialForce::SpatialForce(const Eigen::Vector3d& _linForce,
+                           const Eigen::Vector3d& _moment)
+  : mLinearForce(_linForce),
+    mMoment(_moment)
 {
 
 }
@@ -54,10 +65,46 @@ SpatialForce::~SpatialForce()
 }
 
 //==============================================================================
+void SpatialForce::setLinearForce(const Eigen::Vector3d& _linForce)
+{
+  mLinearForce = _linForce;
+}
+
+//==============================================================================
+void SpatialForce::setMoment(const Eigen::Vector3d& _moment)
+{
+  mMoment = _moment;
+}
+
+//==============================================================================
+const Eigen::Vector3d& SpatialForce::getLinearForce() const
+{
+  return mLinearForce;
+}
+
+//==============================================================================
+Eigen::Vector3d& SpatialForce::getLinearForce()
+{
+  return mLinearForce;
+}
+
+//==============================================================================
+const Eigen::Vector3d& SpatialForce::getMoment() const
+{
+  return mMoment;
+}
+
+//==============================================================================
+Eigen::Vector3d& SpatialForce::getMoment()
+{
+  return mMoment;
+}
+
+//==============================================================================
 double SpatialForce::inner(const SpatialMotion& _vel) const
 {
   return mLinearForce.dot(_vel.getLinear())
-         + mAngularForce.dot(_vel.getAngular());
+         + mMoment.dot(_vel.getAngular());
 }
 
 

@@ -50,7 +50,12 @@ using namespace math;
 using namespace dynamics;
 using namespace simulation;
 
-/******************************************************************************/
+//==============================================================================
+TEST(SpatialVectorAlgebra, SpatialMotion)
+{
+}
+
+//==============================================================================
 TEST(SpatialVectorAlgebra, Inertia)
 {
   // Mass
@@ -111,9 +116,6 @@ TEST(SpatialVectorAlgebra, Inertia)
 
   // Test: tensor
   EXPECT_TRUE(equals(G.getTensor(), transformedTensor, 1e-12));
-
-  //----------------------------------------------------------------------------
-  //
 }
 
 /******************************************************************************/

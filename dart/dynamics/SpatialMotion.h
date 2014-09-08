@@ -34,8 +34,8 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DART_DYNAMICS_SpatialMotion_H_
-#define DART_DYNAMICS_SpatialMotion_H_
+#ifndef DART_DYNAMICS_SPATIALMOTION_H_
+#define DART_DYNAMICS_SPATIALMOTION_H_
 
 #include <Eigen/Dense>
 
@@ -44,40 +44,68 @@
 namespace dart {
 namespace dynamics {
 
+class Inertia;
 class SpatialForce;
 
-/// A class for special motion
+/// SpatialForce class represents linear velocity and angular velocity
+///
+/// The mathmematical concepts and notations of special force is came from
+/// spatial vector algebra. This is also called as se(3), where se(3) is Lie
+/// algebra of SE(3).
 class SpatialMotion
 {
 public:
   /// Constructor
   SpatialMotion();
 
+  /// Constructor
+  /// \param[in] _linVel Linear velocity
+  /// \param[in] _angVel Angular velocity
+  SpatialMotion(const Eigen::Vector3d& _linVel,
+                const Eigen::Vector3d& _angVel);
+
   /// Destructor
   virtual ~SpatialMotion();
 
-  ///
-  const Eigen::Vector3d& getLinear() const { return mLinearVelocity; }
+  //----------------------------------------------------------------------------
+  // Setter/getter for linear force and moment
+  //----------------------------------------------------------------------------
 
-  ///
-  Eigen::Vector3d& getLinear() { return mLinearVelocity; }
+  /// Set linear velocity
+  void setLinearVelocity(const Eigen::Vector3d& _linVel);
 
-  ///
-  const Eigen::Vector3d& getAngular() const { return mAngularVelocity; }
+  /// Set angular velocity
+  void setAngularVelocity(const Eigen::Vector3d& _angVel);
 
-  ///
-  Eigen::Vector3d& getAngular() { return mAngularVelocity; }
+  /// Return linear velocity
+  const Eigen::Vector3d& getLinear() const;
 
-  ///
+  /// Return linear velocity
+  Eigen::Vector3d& getLinear();
+
+  /// Return angular velocity
+  const Eigen::Vector3d& getAngular() const;
+
+  /// Return angular velocity
+  Eigen::Vector3d& getAngular();
+
+  //----------------------------------------------------------------------------
+  // Operators
+  //----------------------------------------------------------------------------
+
+  // TODO(JS): =, +, -, *
+
+  /// Return the inner product with spatial force
   double inner(const SpatialForce& _force) const;
 
-protected:
+  ///
+  SpatialForce ad(const Inertia& _G, const SpatialMotion& _vel);
 
 private:
-  ///
+  /// Linear velocity
   Eigen::Vector3d mLinearVelocity;
 
-  ///
+  /// Angular velocity
   Eigen::Vector3d mAngularVelocity;
 
 public:
@@ -88,4 +116,4 @@ public:
 }  // namespace dynamics
 }  // namespace dart
 
-#endif  // DART_DYNAMICS_SpatialMotion_H_
+#endif  // DART_DYNAMICS_SPATIALMOTION_H_

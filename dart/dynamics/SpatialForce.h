@@ -46,38 +46,63 @@ namespace dynamics {
 
 class SpatialMotion;
 
-/// A class for special velocity
+/// SpatialForce class represents linear force and moment
+///
+/// The mathmematical concepts and notations of special force is came from
+/// spatial vector algebra. This is also called as wrench, and se*(3), where
+/// se*(3) is dual space of Lie algebra of SE(3).
 class SpatialForce
 {
 public:
   /// Constructor
   SpatialForce();
 
+  /// Constructor
+  /// \param[in] _linVel Linear velocity
+  /// \param[in] _angVel Angular velocity
+  SpatialForce(const Eigen::Vector3d& _linForce,
+               const Eigen::Vector3d& _moment);
+
   /// Destructor
   virtual ~SpatialForce();
 
-  ///
-  const Eigen::Vector3d& getLinear() const { return mLinearForce; }
+  //----------------------------------------------------------------------------
+  // Setter/getter for linear force and moment
+  //----------------------------------------------------------------------------
 
-  ///
-  Eigen::Vector3d& getLinear() { return mLinearForce; }
+  /// Set linear force
+  void setLinearForce(const Eigen::Vector3d& _linForce);
 
-  ///
-  const Eigen::Vector3d& getAngular() const { return mAngularForce; }
+  /// Set moment
+  void setMoment(const Eigen::Vector3d& _moment);
 
-  ///
-  Eigen::Vector3d& getAngular() { return mAngularForce; }
+  /// Return the linear force
+  const Eigen::Vector3d& getLinearForce() const;
 
+  /// Return the linear force
+  Eigen::Vector3d& getLinearForce();
+
+  /// Return the moment
+  const Eigen::Vector3d& getMoment() const;
+
+  /// Return the moment
+  Eigen::Vector3d& getMoment();
+
+  //----------------------------------------------------------------------------
+  // Operators
+  //----------------------------------------------------------------------------
+
+  // TODO(JS): =, +, -, *
+
+  /// Return the inner product with spatial motion
   double inner(const SpatialMotion& _vel) const;
 
-protected:
-
 private:
-  ///
+  /// Linear force
   Eigen::Vector3d mLinearForce;
 
-  ///
-  Eigen::Vector3d mAngularForce;
+  /// Moment
+  Eigen::Vector3d mMoment;
 
 public:
   // To get byte-aligned Eigen vectors

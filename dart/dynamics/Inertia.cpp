@@ -254,6 +254,8 @@ const Eigen::Isometry3d& Inertia::getFrame() const
 //==============================================================================
 Eigen::Matrix6d Inertia::getTensor() const
 {
+  // TODO(JS): Need optimize
+
   Eigen::Matrix6d tensor(Eigen::Matrix6d::Zero());
 
   const double& Ixx = mMomentOfInertia(0, 0);
@@ -301,13 +303,13 @@ SpatialForce Inertia::operator*(const SpatialMotion& _vel) const
   const Eigen::Vector3d& v = _vel.getAngular();
 
   // Angular part: R Ic R^T w + m [p]^T [p] w + m [p] v
-  result.getAngular().noalias()  = R*(mMomentOfInertia*(R.transpose()*w));
-  result.getAngular().noalias() -= mMass*p.cross(p.cross(w));
-  result.getAngular().noalias() += mMass*p.cross(v);
+  result.getMoment().noalias()  = R*(mMomentOfInertia*(R.transpose()*w));
+  result.getMoment().noalias() -= mMass*p.cross(p.cross(w));
+  result.getMoment().noalias() += mMass*p.cross(v);
 
   // Linear part: m [p]^T w + m v
-  result.getLinear().noalias()  = mMass*w.cross(p);
-  result.getLinear().noalias() += mMass*v;
+  result.getLinearForce().noalias()  = mMass*w.cross(p);
+  result.getLinearForce().noalias() += mMass*v;
 
   return result;
 }

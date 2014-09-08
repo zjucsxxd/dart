@@ -43,6 +43,17 @@ namespace dynamics {
 
 //==============================================================================
 SpatialMotion::SpatialMotion()
+  : mLinearVelocity(Eigen::Vector3d::Zero()),
+    mAngularVelocity(Eigen::Vector3d::Zero())
+{
+
+}
+
+//==============================================================================
+SpatialMotion::SpatialMotion(const Eigen::Vector3d& _linVel,
+                             const Eigen::Vector3d& _angVel)
+  : mLinearVelocity(_linVel),
+    mAngularVelocity(_angVel)
 {
 
 }
@@ -54,10 +65,59 @@ SpatialMotion::~SpatialMotion()
 }
 
 //==============================================================================
-double dart::dynamics::SpatialMotion::inner(const SpatialForce& _force) const
+void SpatialMotion::setLinearVelocity(const Eigen::Vector3d& _linVel)
 {
-  return mLinearVelocity.dot(_force.getLinear())
-         + mAngularVelocity.dot(_force.getAngular());
+  mLinearVelocity = _linVel;
+}
+
+//==============================================================================
+void SpatialMotion::setAngularVelocity(const Eigen::Vector3d& _angVel)
+{
+  mAngularVelocity = _angVel;
+}
+
+//==============================================================================
+const Eigen::Vector3d& SpatialMotion::getLinear() const
+{
+  return mLinearVelocity;
+}
+
+//==============================================================================
+Eigen::Vector3d& SpatialMotion::getLinear()
+{
+  return mLinearVelocity;
+}
+
+//==============================================================================
+const Eigen::Vector3d& SpatialMotion::getAngular() const
+{
+  return mAngularVelocity;
+}
+
+//==============================================================================
+Eigen::Vector3d& SpatialMotion::getAngular()
+{
+  return mAngularVelocity;
+}
+
+//==============================================================================
+double SpatialMotion::inner(const SpatialForce& _force) const
+{
+  return mLinearVelocity.dot(_force.getLinearForce())
+      + mAngularVelocity.dot(_force.getMoment());
+}
+
+//==============================================================================
+SpatialForce SpatialMotion::ad(const Inertia& _G, const SpatialMotion& _vel)
+{
+  SpatialForce result;
+
+
+
+  if (&_vel == this)
+    int a = 10;
+
+  return result;
 }
 
 }  // namespace dynamics
