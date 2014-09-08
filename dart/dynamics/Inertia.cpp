@@ -254,6 +254,8 @@ const Eigen::Isometry3d& Inertia::getFrame() const
 //==============================================================================
 Eigen::Matrix6d Inertia::getTensor() const
 {
+  Eigen::Matrix6d tensor(Eigen::Matrix6d::Zero());
+
   const double& Ixx = mMomentOfInertia(0, 0);
   const double& Iyy = mMomentOfInertia(1, 1);
   const double& Izz = mMomentOfInertia(2, 2);
@@ -262,18 +264,15 @@ Eigen::Matrix6d Inertia::getTensor() const
   const double& Ixz = mMomentOfInertia(0, 2);
   const double& Iyz = mMomentOfInertia(1, 2);
 
-  Eigen::Matrix6d tensor(Eigen::Matrix6d::Zero());
   tensor(0, 0) = Ixx;
   tensor(1, 1) = Iyy;
   tensor(2, 2) = Izz;
   tensor(0, 1) = tensor(1, 0) = Ixy;
   tensor(0, 2) = tensor(2, 0) = Ixz;
   tensor(1, 2) = tensor(2, 1) = Iyz;
-  tensor.bottomRightCorner<3, 3>() = mMass*Eigen::Matrix3d::Identity();
-
-  assert(mMomentOfInertia(0, 1) == mMomentOfInertia(1, 0));
-  assert(mMomentOfInertia(0, 2) == mMomentOfInertia(2, 0));
-  assert(mMomentOfInertia(1, 2) == mMomentOfInertia(2, 1));
+  tensor(3, 3) = mMass;
+  tensor(4, 4) = mMass;
+  tensor(5, 5) = mMass;
 
   return math::transformInertia(mFrame.inverse(), tensor);
 }
