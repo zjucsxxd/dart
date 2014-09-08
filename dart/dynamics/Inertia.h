@@ -69,7 +69,7 @@ public:
           double _Ixx = 1.0, double _Iyy = 1.0, double _Izz = 1.0,
           double _Ixy = 0.0, double _Ixz = 0.0, double _Iyz = 0.0);
 
-  /// \brief Destructor
+  /// Destructor
   virtual ~Inertia();
 
   //----------------------------------------------------------------------------
