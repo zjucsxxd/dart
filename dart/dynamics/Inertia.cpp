@@ -317,6 +317,8 @@ SpatialForce Inertia::operator*(const SpatialMotion& _vel) const
 //==============================================================================
 Inertia Inertia::getRandom()
 {
+  // TODO(JS): Add parameters to set the bounds
+
   using namespace Eigen;
 
   Inertia result;
@@ -341,6 +343,12 @@ Inertia Inertia::getRandom()
   result.setFrame(T);
 
   return result;
+}
+
+//==============================================================================
+void Inertia::setRandom()
+{
+  *this = Inertia::getRandom();
 }
 
 //==============================================================================

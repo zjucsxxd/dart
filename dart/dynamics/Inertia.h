@@ -220,6 +220,9 @@ public:
   /// Return random inertia
   static Inertia getRandom();
 
+  /// Set random inertia
+  void setRandom();
+
   /// Return kinetic energy
   double getKineticEnergy(const SpatialMotion& _vel) const;
 
