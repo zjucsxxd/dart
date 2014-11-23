@@ -14,6 +14,7 @@ foreach(APPDIR
     rigidCubes
     rigidLoop    
     softBodies
+    sysid
     vehicle
     )
     add_subdirectory(${APPDIR})
