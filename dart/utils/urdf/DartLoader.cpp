@@ -111,6 +111,11 @@ std::string DartLoader::getFullFilePath(const std::string &_filename,
   size_t p = fullpath.find("package:/");
   if(p < std::string::npos)
   {
+    if(mPackageDirectory.empty())
+      dtwarn << "[DartLoader] Trying to load a URDF that uses the 'package://' keyword, "
+                "but you did not set a package directory using setPackageDirectory(~). "
+                "This will likely result in a segmentation fault." << std::endl;
+
     fullpath.erase(p, p+9);
     fullpath.insert(p, mPackageDirectory);
   }
