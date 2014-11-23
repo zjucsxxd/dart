@@ -11,6 +11,7 @@ int main(int argc, char* argv[])
   dart::simulation::World* world = new dart::simulation::World;
 
   dart::utils::DartLoader dl;
+  dl.setPackageDirectory("/home/grey/resources/drchubo/drchubo_v2");
   dart::dynamics::Skeleton* ground =
       dl.parseSkeleton(DART_DATA_PATH"urdf/KR5/ground.urdf");
 
