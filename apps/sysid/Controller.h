@@ -9,7 +9,7 @@ class Controller
 {
 public:
 
-  Controller(dart::dynamics::Skeleton* _robot, double _kp=2, double _kd=1);
+  Controller(dart::dynamics::Skeleton* _robot, double _kp=0.5, double _kd=0);
 
   std::vector<Eigen::VectorXd> mDesiredTrajectory;
 

@@ -43,6 +43,14 @@ void Controller::update()
   bool finished = step >= mDesiredTrajectory.size();
   size_t index = finished? mDesiredTrajectory.size()-1 : step;
 
+  const Eigen::VectorXd& vels = mRobot->getVelocities();
+  const Eigen::VectorXd& accs = mRobot->getAccelerations();
+  for(size_t j=0, end=mRobot->getNumDofs(); j<end; ++j)
+  {
+    mRobot->setAcceleration(j, 0);
+    mRobot->setVelocity(j, 0);
+  }
+  mRobot->computeInverseDynamics();
 
   for(size_t j=0; j<6; ++j)
     mRobot->setForce(j, 0);
@@ -50,6 +58,8 @@ void Controller::update()
   double dt = mRobot->getTimeStep();
   for(size_t j=6, end=mRobot->getNumDofs(); j<end; ++j)
   {
+//    double force = mRobot->getForce(j);
+    double force = 0;
     double err = mDesiredTrajectory[index][j] - mRobot->getPosition(j);
 //    double err = 0;
 
@@ -59,11 +69,15 @@ void Controller::update()
 
     double err_dot = 0;
 
-    mRobot->setForce(j, mKp*err + mKd*err_dot);
+    force += mKp*err + mKd*err_dot;
+
+    mRobot->setForce(j, force);
 
 //    mRobot->get
   }
 
+  mRobot->setVelocities(vels);
+  mRobot->setAccelerations(accs);
 
   ++step;
 
