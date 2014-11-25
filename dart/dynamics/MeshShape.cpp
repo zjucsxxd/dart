@@ -46,6 +46,7 @@
 #include <assimp/cimport.h>
 
 #include "dart/renderer/RenderInterface.h"
+#include "dart/common/Console.h"
 
 #include "dart/common/Console.h"
 
