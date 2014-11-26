@@ -9,7 +9,6 @@ var lcp_8cpp =
     [ "dEstimateSolveLCPMemoryReq", "df/d8a/lcp_8cpp.html#acbae00b50307c74a3e10f1243d95d9c0", null ],
     [ "dSolveLCP", "df/d8a/lcp_8cpp.html#a77b428335c421ba0a213d31ea96afff6", null ],
     [ "dTestSolveLCP", "df/d8a/lcp_8cpp.html#ad944c6df03fbbfdea992ed94884e610b", null ],
-    [ "EstimateTestSolveLCPMemoryReq", "df/d8a/lcp_8cpp.html#a60e8b2c5c8a4cc9230a348015bd719d9", null ],
     [ "swapProblem", "df/d8a/lcp_8cpp.html#adfa80dd071cf9db2aa94ba873a3b7b06", null ],
     [ "swapRowsAndCols", "df/d8a/lcp_8cpp.html#abe8ecf7da74b1c15fd220dba3fde6fbe", null ]
 ];

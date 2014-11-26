@@ -7,8 +7,6 @@ var namespacedart_1_1dynamics =
     [ "EllipsoidShape", "db/da3/classdart_1_1dynamics_1_1EllipsoidShape.html", "db/da3/classdart_1_1dynamics_1_1EllipsoidShape" ],
     [ "EulerJoint", "d2/d87/classdart_1_1dynamics_1_1EulerJoint.html", "d2/d87/classdart_1_1dynamics_1_1EulerJoint" ],
     [ "FreeJoint", "d3/df1/classdart_1_1dynamics_1_1FreeJoint.html", "d3/df1/classdart_1_1dynamics_1_1FreeJoint" ],
-    [ "GenCoord", "de/d5c/classdart_1_1dynamics_1_1GenCoord.html", "de/d5c/classdart_1_1dynamics_1_1GenCoord" ],
-    [ "GenCoordSystem", "dc/d75/classdart_1_1dynamics_1_1GenCoordSystem.html", "dc/d75/classdart_1_1dynamics_1_1GenCoordSystem" ],
     [ "Joint", "d6/d5b/classdart_1_1dynamics_1_1Joint.html", "d6/d5b/classdart_1_1dynamics_1_1Joint" ],
     [ "Marker", "db/d20/classdart_1_1dynamics_1_1Marker.html", "db/d20/classdart_1_1dynamics_1_1Marker" ],
     [ "MeshShape", "d0/d2d/classdart_1_1dynamics_1_1MeshShape.html", "d0/d2d/classdart_1_1dynamics_1_1MeshShape" ],

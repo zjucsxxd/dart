@@ -8,7 +8,7 @@ var classdart_1_1constraint_1_1Constraint =
     [ "excite", "d4/d4b/classdart_1_1constraint_1_1Constraint.html#aca94ebb6e19a3f44fee344f6d13e7819", null ],
     [ "getDimension", "d4/d4b/classdart_1_1constraint_1_1Constraint.html#a4959a1b50aad7342934281c8378bf936", null ],
     [ "getInformation", "d4/d4b/classdart_1_1constraint_1_1Constraint.html#a2c6089085b93b391291029046e2b8673", null ],
-    [ "getRootSkeleton", "d4/d4b/classdart_1_1constraint_1_1Constraint.html#a3083e42848cdf7fcaaacee837a652d88", null ],
+    [ "getRootSkeleton", "d4/d4b/classdart_1_1constraint_1_1Constraint.html#a204d1f2e2caa76b7b6fce85da2783343", null ],
     [ "getRootSkeleton", "d4/d4b/classdart_1_1constraint_1_1Constraint.html#acc5fc239313136e528f739bad88c41cd", null ],
     [ "getVelocityChange", "d4/d4b/classdart_1_1constraint_1_1Constraint.html#a25ff4bb4ae03223413fe74bb44f53058", null ],
     [ "isActive", "d4/d4b/classdart_1_1constraint_1_1Constraint.html#aae565d8d018cef08a059a308cc5993b5", null ],

@@ -45,24 +45,25 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"d1/dce/classdart_1_1collision_1_1FCLCollisionDetector.html",
-"d2/ddf/lodepng_8h.html#a4f8f383c22ceb7c22b1cc7e774f0bad2",
-"d3/d39/DantzigLCPSolver_8h_source.html",
-"d4/d4b/classdart_1_1constraint_1_1Constraint.html#adc7d4f6fbc0bb75c1ac471cbd467cc54",
-"d5/d55/MathTypes_8h.html#a01cb5bcc29472c9b1983d0397126394c",
-"d6/d0c/Parser_8h.html#a214157be76b325dcd17f80f8f519d040",
-"d6/dc9/classdart_1_1constraint_1_1ConstraintSolver.html#aa907e84ba399af560b67805a3e0eff12",
-"d7/d41/classdart_1_1simulation_1_1World.html#a012bbbc562d0d11d1ff311db3223a027",
-"d8/da2/classdart_1_1dynamics_1_1WeldJoint.html#a393671ded94615f7fc93e5721f6f00a4",
-"da/d06/Trackball_8h_source.html",
-"db/d1c/classdart_1_1dynamics_1_1Shape.html#a52bc86be856e82f6f6d3d86da9cb4b0da59fa94d70966ab54b5fbb478d2ba0c6a",
-"db/df1/Helpers_8h.html#a607feabb775dd93e2b935cb0fef3f712",
-"dc/daa/urdf__world__parser_8h.html",
-"dd/df4/matrix_8h.html#add0e90cbd14b48ea6379963f95e2ca98",
-"df/d7a/structdart_1_1utils_1_1c3d__param__t.html",
-"globals_func_0x73.html"
+"d1/dce/classdart_1_1collision_1_1FCLCollisionDetector.html#a21016049c1f32c5683da660ef35a40cd",
+"d2/ddf/lodepng_8h.html#a533d58c161de45096b83c44bbaa95e93",
+"d3/d73/classdart_1_1dynamics_1_1CylinderShape.html#a1873b2df9f8725f197ccb15d61efa452",
+"d4/d57/classdart_1_1constraint_1_1DantzigLCPSolver.html",
+"d5/d2e/classdart_1_1dynamics_1_1BodyNode.html#aeacf23fdcb854dd7b0ae2c9ca74507aa",
+"d5/d84/matrix_8cpp.html#af09d7072414c33ddeb00dd4f1b68682b",
+"d6/dc0/classdart_1_1collision_1_1BulletCollisionNode.html#a59c5e02df3932a79e508f2ee1cbd2f3c",
+"d7/d33/classdart_1_1dynamics_1_1SingleDofJoint.html#ac8ff31cae90466a8ebb16d3f622550cd",
+"d8/d3c/classdart_1_1integration_1_1RK4Integrator.html",
+"d9/dda/classdart_1_1planning_1_1LinearPathSegment.html#ac2e8a480f96178c658234beaf8bb9f05",
+"da/ddb/classdart_1_1renderer_1_1RenderInterface.html#a59aefadbb2ca29b9c9ad2e086bfb51ef",
+"db/d9a/classdart_1_1dynamics_1_1ScrewJoint.html#af8dcfdeac0e9b863e2280e6c7dc2ae84",
+"dc/ddb/classdart_1_1optimizer_1_1IpoptSolver.html#aedd686fe69a89653c40fcee763de7938",
+"dd/df4/matrix_8h.html#af09d7072414c33ddeb00dd4f1b68682b",
+"df/dbc/classdart_1_1optimizer_1_1Problem.html#ab93784216b85c044d6d2a6a38d36aaca"
 ];
 
+var SYNCONMSG = 'click to disable panel synchronisation';
+var SYNCOFFMSG = 'click to enable panel synchronisation';
 var SYNCONMSG = 'click to disable panel synchronisation';
 var SYNCOFFMSG = 'click to enable panel synchronisation';
 var navTreeSubIndices = new Array();
@@ -145,12 +146,12 @@ function createIndent(o,domNode,node,level)
   var level=-1;
   var n = node;
   while (n.parentNode) { level++; n=n.parentNode; }
-  var imgNode = document.createElement("img");
-  imgNode.style.paddingLeft=(16*level).toString()+'px';
-  imgNode.width  = 16;
-  imgNode.height = 22;
-  imgNode.border = 0;
   if (node.childrenData) {
+    var imgNode = document.createElement("img");
+    imgNode.style.paddingLeft=(16*level).toString()+'px';
+    imgNode.width  = 16;
+    imgNode.height = 22;
+    imgNode.border = 0;
     node.plus_img = imgNode;
     node.expandToggle = document.createElement("a");
     node.expandToggle.href = "javascript:void(0)";
@@ -167,8 +168,12 @@ function createIndent(o,domNode,node,level)
     domNode.appendChild(node.expandToggle);
     imgNode.src = node.relpath+"ftv2pnode.png";
   } else {
-    imgNode.src = node.relpath+"ftv2node.png";
-    domNode.appendChild(imgNode);
+    var span = document.createElement("span");
+    span.style.display = 'inline-block';
+    span.style.width   = 16*(level+1)+'px';
+    span.style.height  = '22px';
+    span.innerHTML = '&#160;';
+    domNode.appendChild(span);
   } 
 }
 
@@ -387,7 +392,7 @@ function showNode(o, node, index, hash)
       if (!node.childrenVisited) {
         getNode(o, node);
       }
-      $(node.getChildrenUL()).show();
+      $(node.getChildrenUL()).css({'display':'block'});
       if (node.isLast) {
         node.plus_img.src = node.relpath+"ftv2mlastnode.png";
       } else {
@@ -419,8 +424,22 @@ function showNode(o, node, index, hash)
   }
 }
 
+function removeToInsertLater(element) {
+  var parentNode = element.parentNode;
+  var nextSibling = element.nextSibling;
+  parentNode.removeChild(element);
+  return function() {
+    if (nextSibling) {
+      parentNode.insertBefore(element, nextSibling);
+    } else {
+      parentNode.appendChild(element);
+    }
+  };
+}
+
 function getNode(o, po)
 {
+  var insertFunction = removeToInsertLater(po.li);
   po.childrenVisited = true;
   var l = po.childrenData.length-1;
   for (var i in po.childrenData) {
@@ -428,6 +447,7 @@ function getNode(o, po)
     po.children[i] = newNode(o, po, nodeData[0], nodeData[1], nodeData[2],
       i==l);
   }
+  insertFunction();
 }
 
 function gotoNode(o,subIndex,root,hash,relpath)
@@ -531,7 +551,10 @@ function initNavTree(toroot,relpath)
     navSync.click(function(){ toggleSyncButton(relpath); });
   }
 
-  navTo(o,toroot,window.location.hash,relpath);
+  $(window).load(function(){
+    navTo(o,toroot,window.location.hash,relpath);
+    showRoot();
+  });
 
   $(window).bind('hashchange', function(){
      if (window.location.hash && window.location.hash.length>1){
@@ -554,7 +577,5 @@ function initNavTree(toroot,relpath)
        navTo(o,toroot,window.location.hash,relpath);
      }
   })
-
-  $(window).load(showRoot);
 }
 

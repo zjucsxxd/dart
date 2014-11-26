@@ -6,6 +6,7 @@ var Helpers_8h =
     [ "asech", "db/df1/Helpers_8h.html#ad24a2a30d51d65525d2214ef57cb01e7", null ],
     [ "asinh", "db/df1/Helpers_8h.html#adbdd4d2bd45b418902a972396060ab83", null ],
     [ "atanh", "db/df1/Helpers_8h.html#a607feabb775dd93e2b935cb0fef3f712", null ],
+    [ "castUIntToInt", "db/df1/Helpers_8h.html#af650ba1b2ff86de4157fcc815b26fba1", null ],
     [ "CR", "db/df1/Helpers_8h.html#a016887264359b2adec638f50b2f521d9", null ],
     [ "delta", "db/df1/Helpers_8h.html#ae6aede87f5eb5a1e43f0c8421dc237fa", null ],
     [ "isEqual", "db/df1/Helpers_8h.html#a3660a2b791e39ec186f8632c94ba0dbb", null ],

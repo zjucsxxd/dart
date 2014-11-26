@@ -45,9 +45,7 @@ var hierarchy =
     [ "dart::utils::FileInfoDof", "d9/dbf/classdart_1_1utils_1_1FileInfoDof.html", null ],
     [ "dart::utils::FileInfoWorld", "d8/db2/classdart_1_1utils_1_1FileInfoWorld.html", null ],
     [ "dart::optimizer::Function", "d9/dae/classdart_1_1optimizer_1_1Function.html", null ],
-    [ "dart::dynamics::GenCoord", "de/d5c/classdart_1_1dynamics_1_1GenCoord.html", null ],
     [ "dart::dynamics::GenCoordInfo", "d8/d85/structdart_1_1dynamics_1_1GenCoordInfo.html", null ],
-    [ "dart::dynamics::GenCoordSystem", "dc/d75/classdart_1_1dynamics_1_1GenCoordSystem.html", null ],
     [ "dart::gui::GlutWindow", "d1/d33/classdart_1_1gui_1_1GlutWindow.html", [
       [ "dart::gui::Win2D", "d2/ded/classdart_1_1gui_1_1Win2D.html", null ],
       [ "dart::gui::Win3D", "d9/df5/classdart_1_1gui_1_1Win3D.html", [

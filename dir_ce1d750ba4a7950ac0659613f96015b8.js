@@ -28,14 +28,6 @@ var dir_ce1d750ba4a7950ac0659613f96015b8 =
     [ "FreeJoint.h", "db/da7/FreeJoint_8h.html", [
       [ "FreeJoint", "d3/df1/classdart_1_1dynamics_1_1FreeJoint.html", "d3/df1/classdart_1_1dynamics_1_1FreeJoint" ]
     ] ],
-    [ "GenCoord.cpp", "dd/d56/GenCoord_8cpp.html", null ],
-    [ "GenCoord.h", "d0/d61/GenCoord_8h.html", [
-      [ "GenCoord", "de/d5c/classdart_1_1dynamics_1_1GenCoord.html", "de/d5c/classdart_1_1dynamics_1_1GenCoord" ]
-    ] ],
-    [ "GenCoordSystem.cpp", "db/dfd/GenCoordSystem_8cpp.html", null ],
-    [ "GenCoordSystem.h", "db/d9f/GenCoordSystem_8h.html", [
-      [ "GenCoordSystem", "dc/d75/classdart_1_1dynamics_1_1GenCoordSystem.html", "dc/d75/classdart_1_1dynamics_1_1GenCoordSystem" ]
-    ] ],
     [ "Joint.cpp", "d6/de6/Joint_8cpp.html", null ],
     [ "Joint.h", "de/d50/Joint_8h.html", [
       [ "Joint", "d6/d5b/classdart_1_1dynamics_1_1Joint.html", "d6/d5b/classdart_1_1dynamics_1_1Joint" ]
@@ -48,7 +40,6 @@ var dir_ce1d750ba4a7950ac0659613f96015b8 =
     [ "MeshShape.h", "d0/d7e/MeshShape_8h.html", [
       [ "MeshShape", "d0/d2d/classdart_1_1dynamics_1_1MeshShape.html", "d0/d2d/classdart_1_1dynamics_1_1MeshShape" ]
     ] ],
-    [ "MultiDofJoint.cpp", "dc/d3f/MultiDofJoint_8cpp.html", null ],
     [ "MultiDofJoint.h", "d4/d92/MultiDofJoint_8h.html", [
       [ "MultiDofJoint", "da/d30/classdart_1_1dynamics_1_1MultiDofJoint.html", "da/d30/classdart_1_1dynamics_1_1MultiDofJoint" ]
     ] ],

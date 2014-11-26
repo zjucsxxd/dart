@@ -32,6 +32,7 @@ var Geometry_8cpp =
     [ "expMapRot", "d7/def/Geometry_8cpp.html#af297b066593714b7d7006d531c2328ac", null ],
     [ "expToQuat", "d7/def/Geometry_8cpp.html#af7d1a1edd8644935ddf7d40e7c39139a", null ],
     [ "fromSkewSymmetric", "d7/def/Geometry_8cpp.html#a60ed1d87345d9718ff7f9a6cb337eac4", null ],
+    [ "getFrameOriginAxisZ", "d7/def/Geometry_8cpp.html#a0f897dd4d484e992da657fcbabb0f919", null ],
     [ "logMap", "d7/def/Geometry_8cpp.html#a91021e58843804e7ca334848ff9f0323", null ],
     [ "logMap", "d7/def/Geometry_8cpp.html#ace4da4be316f9118106f4aacfe8f64f9", null ],
     [ "makeSkewSymmetric", "d7/def/Geometry_8cpp.html#abc4b6c2f5202c6ee0d82ff84812dae6b", null ],
