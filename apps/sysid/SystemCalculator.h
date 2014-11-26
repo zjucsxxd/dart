@@ -18,6 +18,7 @@ class SystemCalculator
 public:
   SystemCalculator(const dart::dynamics::Skeleton* robot);
 
+  Eigen::MatrixXd computeFullA() const;
   Eigen::Matrix0610d computeA(size_t index) const;
   Eigen::Matrix6d computeSpatialTransform(size_t from, size_t to) const;
 

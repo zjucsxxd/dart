@@ -4,6 +4,8 @@
 #include <Eigen/Eigen>
 
 #include "dart/dynamics/Skeleton.h"
+#include "SystemCalculator.h"
+
 
 class Controller
 {
@@ -20,6 +22,8 @@ public:
   double mKp;
   double mKd;
 
+  double max_torque;
+
 protected:
 
   size_t step;
@@ -30,6 +34,13 @@ protected:
   std::vector<Eigen::VectorXd> mActualVelocities;
   std::vector<Eigen::VectorXd> mActualAccelerations;
   std::vector<Eigen::Vector6d> mExternalForces;
+
+  std::vector<Eigen::Matrix0610d> mSampleA;
+  std::vector<Eigen::VectorXd> mSampleForces;
+  std::vector<Eigen::MatrixXd> mSampleDynamics;
+
+
+  SystemCalculator calculator;
 
 };
 

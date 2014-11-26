@@ -16,11 +16,11 @@ MyWindow::~MyWindow()
 
 void MyWindow::timeStepping()
 {
-  std::cout << "Time stepping" << std::endl;
+//  std::cout << "Time stepping" << std::endl;
   if(mController)
     mController->update();
 
-  std::cout << "World stepping" << std::endl;
+//  std::cout << "World stepping" << std::endl;
   mWorld->step();
-  std::cout << "World stepped" << std::endl;
+//  std::cout << "World stepped" << std::endl;
 }

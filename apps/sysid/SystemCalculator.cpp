@@ -58,8 +58,8 @@ Eigen::Matrix0610d SystemCalculator::computeA(size_t index) const
   A.block<3,1>(3,0) = d;
   A.block<3,3>(0,3) = -skew(d);
   A.block<3,3>(3,3) = skew(w_dot) + S_w*S_w;
-  A.block<3,6>(6,0) = L(w_dot) + S_w*L(w);
-  A.block<3,6>(6,3).setZero();
+  A.block<3,6>(0,6) = L(w_dot) + S_w*L(w);
+  A.block<3,6>(3,6).setZero();
 
   return A;
 }

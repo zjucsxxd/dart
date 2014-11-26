@@ -61,7 +61,8 @@ int main(int argc, char* argv[])
 {
   dart::simulation::World* world = new dart::simulation::World;
 
-  dart::dynamics::Skeleton* ground = create_ground();
+//  dart::dynamics::Skeleton* ground = create_ground();
+//  world->addSkeleton(ground);
 
   dart::utils::DartLoader dl;
   dl.setPackageDirectory("/home/grey/resources/drchubo");
@@ -74,12 +75,12 @@ int main(int argc, char* argv[])
     std::cout << robot->getJoint(j)->getName() << std::endl;
 
   robot->getJoint(0)->setPosition(5, 1);
-  robot->computeForwardKinematics(true, false, false);
+  robot->computeForwardKinematics(true, true, true);
 
-  world->addSkeleton(ground);
   world->addSkeleton(robot);
 
-  world->setGravity(Eigen::Vector3d(0, 0, -9.81));
+//  world->setGravity(Eigen::Vector3d(0, 0, -9.81));
+  world->setGravity(Eigen::Vector3d(0, 0, 0));
   world->setTimeStep(0.001);
 
 
