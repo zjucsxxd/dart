@@ -65,6 +65,12 @@ public:
     return mWrench - mJacobian * mForces;
   }
 
+  // Documentation inherited
+  virtual void setPositions(const Eigen::VectorXd& _positions);
+
+  // Documentation inherited
+  virtual Eigen::VectorXd getPositions() const;
+
 protected:
   // Documentation inherited
   virtual void integratePositions(double _dt);
