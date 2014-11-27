@@ -41,26 +41,30 @@
 
 #include <Eigen/Dense>
 
+#include "dart/common/Factory.h"
 #include "dart/dynamics/SingleDofJoint.h"
 
 namespace dart {
 namespace dynamics {
 
-/// class RevoluteJoint
+/// \brief class RevoluteJoint
 class RevoluteJoint : public SingleDofJoint
 {
 public:
-  /// Constructor
+  /// \brief Constructor
+  /// \warning This function will turn to protected member since DART 5.0.
+  /// Please use Skeleton::createJoint() to create joint.
   RevoluteJoint(const Eigen::Vector3d& axis = Eigen::Vector3d(1.0, 0.0, 0.0),
                 const std::string& _name = "Noname RevoluteJoint");
 
-  /// Destructor
+  /// brief Destructor
+  /// \warning This function will turn to protected member since DART 5.0.
   virtual ~RevoluteJoint();
 
-  ///
+  /// \brief Set rotation axis
   void setAxis(const Eigen::Vector3d& _axis);
 
-  ///
+  /// \brief Get rotation axis
   const Eigen::Vector3d& getAxis() const;
 
   // Documentation inherited
@@ -80,13 +84,16 @@ protected:
   virtual void updateLocalJacobianTimeDeriv();
 
 protected:
-  /// Rotational axis
+  /// \brief Rotational axis
   Eigen::Vector3d mAxis;
 
 public:
   // To get byte-aligned Eigen vectors
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
+// Register to the joint factory
+DART_FACTORY_REGISTER(Joint, RevoluteJoint, "RevoluteJoint")
 
 }  // namespace dynamics
 }  // namespace dart

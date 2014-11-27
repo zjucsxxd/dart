@@ -40,6 +40,7 @@
 
 #include <Eigen/Dense>
 
+#include "dart/common/Deprecated.h"
 #include "dart/math/Geometry.h"
 
 namespace dart {
@@ -65,10 +66,8 @@ public:
     SOFT_MESH
   };
 
-  /// \brief Constructor
-  explicit Shape(ShapeType _type);
-
   /// \brief Destructor
+  /// \warning This function will turn to protected member since DART 5.0.
   virtual ~Shape();
 
   /// \brief Set color.
@@ -122,6 +121,14 @@ public:
                     bool _useDefaultColor = true) const = 0;
 
 protected:
+  /// \brief Constructor
+  Shape();
+
+  /// \brief Constructor
+  /// \warning This function is deprecated since DART 4.3.
+  DEPRECATED(4.3)
+  explicit Shape(ShapeType _type);
+
   /// \brief
   virtual void computeVolume() = 0;
 

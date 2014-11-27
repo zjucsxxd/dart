@@ -114,6 +114,9 @@ private:
   typedef std::map<std::string, std::function<Base*()>> ObjectMap;
 
 private:
+  /// \brief Constructor
+  Factory() = delete;
+
   /// \brief Get or create object map
   static ObjectMap* getOrCreateObjectMap()
   {
@@ -126,13 +129,6 @@ private:
 private:
   /// \brief Object map
   static ObjectMap* mObjectMap;
-
-public:
-  /// \brief Constructor
-  Factory() = delete;
-
-  /// \brief Assignmen operator
-  Factory& operator=(const Factory<Base>&) = delete;
 };
 
 template<class Base>
@@ -176,7 +172,7 @@ private:
 
 #define DART_FACTORY_CREATABLE(BASE, TYPE)                                     \
   public:                                                                      \
-    friend class RegistryEntry<BASE, TYPE>;
+    friend class dart::common::RegistryEntry<BASE, TYPE>;
 
 #define DART_FACTORY_REGISTER(BASE, TYPE, NAME)                                \
 namespace                                                                      \
@@ -184,13 +180,13 @@ namespace                                                                      \
   template<class BASE, class TYPE>                                             \
   class Object##BASE##TYPE##Registration                                       \
   {                                                                            \
-    static const RegistryEntry<BASE, TYPE>& reg;                               \
+    static const dart::common::RegistryEntry<BASE, TYPE>& reg;                 \
   };                                                                           \
                                                                                \
   template<>                                                                   \
-  const RegistryEntry<BASE, TYPE>&                                             \
+  const dart::common::RegistryEntry<BASE, TYPE>&                               \
       Object##BASE##TYPE##Registration<BASE, TYPE>::reg                        \
-          = RegistryEntry<BASE, TYPE>::getInstance(NAME);                      \
+          = dart::common::RegistryEntry<BASE, TYPE>::getInstance(NAME);        \
 }
 
 #endif  // DART_COMMON_FACTORY_H_

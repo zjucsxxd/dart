@@ -43,6 +43,7 @@
 #include <vector>
 
 #include "dart/common/Console.h"
+#include "dart/common/Factory.h"
 #include "dart/math/Geometry.h"
 #include "dart/math/Helpers.h"
 #include "dart/dynamics/BodyNode.h"
@@ -172,6 +173,111 @@ double Skeleton::getMass() const
 }
 
 //==============================================================================
+BodyNode* Skeleton::createBodyNode()
+{
+//  const std::string& name = mNameMgr.issueNewName("BodyNode");
+  const std::string& name = "BodyNode";
+
+  return createBodyNode(name);
+}
+
+//==============================================================================
+BodyNode* Skeleton::createBodyNode(const std::string& _name)
+{
+  if (_name.empty())
+  {
+    dtwarn << "Empty name is not allowed." << std::endl;
+    return nullptr;
+  }
+
+  // Check duplicity
+//  if (mNameMgr.hasName(_name))
+//  {
+//    dtwarn << "Can't create BodyNode[" << _name
+//           << "] since it was already created with the given name."
+//           << std::endl;
+//    return nullptr;
+//  }
+
+  // Check if the given type is a inheritance of Joint class
+//  assert(ObjectFactory::validateType<BodyNode>("BodyNode"));
+
+  // Create new BodyNode
+//  BodyNode* newBodyNode = static_cast<BodyNode*>(ObjectFactory::createObject("BodyNode"));
+  BodyNode* newBodyNode = new BodyNode();
+//  newBodyNode->setSkeleton(this);
+//  newBodyNode->init(this);
+  newBodyNode->mSkeleton = this;
+  newBodyNode->setName(_name);
+
+  // Add the name to the NameManager
+//  mNameMgr.addName(_name, newBodyNode);
+
+//  mBodyNodePool.push_back(newBodyNode);
+
+//  if (mBaseBodyNode == nullptr)
+//    mBaseBodyNode = newBodyNode;
+
+  return newBodyNode;
+}
+
+//==============================================================================
+bool Skeleton::destroyBodyNode(BodyNode* _bodyNode)
+{
+  assert(_bodyNode != nullptr);
+
+//  auto res = std::find(mBodyNodes.begin(), mBodyNodes.end(), _bodyNode);
+
+//  if (res != mBodyNodes.end())
+//  {
+//    mBodyNodes.erase(res);
+
+//    assert(mNameMgr.hasName(_bodyNode->getName()));
+//    mNameMgr.removeName(_bodyNode->getName());
+
+//    if (_bodyNode == mBaseBodyNode)
+//    {
+//      if (!mBodyNodes.empty())
+//        mBaseBodyNode = mBodyNodes[0];
+//      else
+//        mBaseBodyNode = nullptr;
+//    }
+
+//    delete _bodyNode;
+//    return true;
+//  }
+//  else
+//  {
+    return false;
+//  }
+}
+
+//==============================================================================
+bool Skeleton::destroyBodyNode(const std::string& _name)
+{
+//  BodyNode* body = getBodyNode(_name);
+
+//  if (body != nullptr)
+//    return destroyBodyNode(body);
+//  else
+    return false;
+}
+
+//==============================================================================
+bool Skeleton::destroyAllBodyNodes()
+{
+//  for (const auto& body : mBodyNodes)
+//  {
+//    mNameMgr.removeName(body->getName());
+//    delete body;
+//  }
+
+//  mBodyNodes.clear();
+
+  return true;
+}
+
+//==============================================================================
 void Skeleton::addBodyNode(BodyNode* _body)
 {
   assert(_body && _body->getParentJoint());
@@ -249,6 +355,90 @@ SoftBodyNode* Skeleton::getSoftBodyNode(const std::string& _name) const
   }
 
   return NULL;
+}
+
+//==============================================================================
+Joint* Skeleton::createJoint(const std::string& _type)
+{
+//  const std::string& name = mNameMgr.issueNewName("Joint");
+  const std::string& name = "Joint";
+
+  return createJoint(_type, name);
+}
+
+//==============================================================================
+Joint* Skeleton::createJoint(const std::string& _type, const std::string& _name)
+{
+  // Check if the given type is a inheritance of Joint class
+//  assert(ObjectFactory::validateType<Joint>(_type));
+
+//  Joint* newJoint = static_cast<Joint*>(ObjectFactory::createObject(_type));
+  Joint* newJoint = common::Factory<Joint>::createObject(_type);
+
+  if (newJoint == nullptr)
+  {
+    dtdbg << "Fail to create joint [type:" << _type << ", name:" << _name
+          << "].\n";
+    return nullptr;
+  }
+
+  // Issue new name and set it
+  // newJoint->setSkeleton(this);
+//  newJoint->setSkeleton(this);
+  newJoint->init(this);
+  newJoint->setName(_name);
+
+//  mJointPool.push_back(newJoint);
+
+  return newJoint;
+}
+
+//==============================================================================
+bool Skeleton::destroyJoint(Joint* _joint)
+{
+  assert(_joint != nullptr);
+
+//  auto res = std::find(mJointPool.begin(), mJointPool.end(), _joint);
+
+//  if (res != mJointPool.end())
+//  {
+//    mJointPool.erase(res);
+
+//    assert(mNameMgr.hasName(_joint->getName()));
+//    mNameMgr.removeName(_joint->getName());
+
+//    delete _joint;
+//    return true;
+//  }
+//  else
+//  {
+    return false;
+//  }
+}
+
+//==============================================================================
+bool Skeleton::destroyJoint(const std::string& _name)
+{
+//  Joint* joint = getJoint(_name);
+
+//  if (joint != nullptr)
+//    return destroyJoint(joint);
+//  else
+    return false;
+}
+
+//==============================================================================
+bool Skeleton::destroyAllJoints()
+{
+//  for (const auto& joint : mJointPool)
+//  {
+//    mNameMgr.removeName(joint->getName());
+//    delete joint;
+//  }
+
+//  mJointPool.clear();
+
+  return true;
 }
 
 //==============================================================================

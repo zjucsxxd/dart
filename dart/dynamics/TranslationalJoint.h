@@ -39,6 +39,7 @@
 
 #include <string>
 
+#include "dart/common/Factory.h"
 #include "dart/dynamics/MultiDofJoint.h"
 
 namespace dart {
@@ -48,10 +49,13 @@ namespace dynamics {
 class TranslationalJoint : public MultiDofJoint<3>
 {
 public:
-  /// Constructor
+  /// \brief Constructor
+  /// \warning This function will turn to protected member since DART 5.0.
+  /// Please use Skeleton::createJoint() to create joint.
   explicit TranslationalJoint(const std::string& _name = "TranslationalJoint");
 
-  /// Destructor
+  /// brief Destructor
+  /// \warning This function will turn to protected member since DART 5.0.
   virtual ~TranslationalJoint();
 
   // Documentation inherited
@@ -74,6 +78,9 @@ public:
   // To get byte-aligned Eigen vectors
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
+// Register to the joint factory
+DART_FACTORY_REGISTER(Joint, TranslationalJoint, "TranslationalJoint")
 
 }  // namespace dynamics
 }  // namespace dart

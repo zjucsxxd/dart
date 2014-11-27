@@ -39,6 +39,7 @@
 
 #include <string>
 
+#include "dart/common/Factory.h"
 #include "dart/dynamics/MultiDofJoint.h"
 
 namespace dart {
@@ -57,10 +58,13 @@ public:
     AO_ZXY = 3
   };
 
-  /// Constructor
+  /// \brief Constructor
+  /// \warning This function will turn to protected member since DART 5.0.
+  /// Please use Skeleton::createJoint() to create joint.
   explicit EulerJoint(const std::string& _name = "EulerJoint");
 
-  /// Destructor
+  /// brief Destructor
+  /// \warning This function will turn to protected member since DART 5.0.
   virtual ~EulerJoint();
 
   ///
@@ -93,6 +97,9 @@ public:
   // To get byte-aligned Eigen vectors
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
+// Register to the joint factory
+DART_FACTORY_REGISTER(Joint, EulerJoint, "EulerJoint")
 
 }  // namespace dynamics
 }  // namespace dart

@@ -51,12 +51,6 @@ class Skeleton;
 class SingleDofJoint : public Joint
 {
 public:
-  /// Constructor
-  SingleDofJoint(const std::string& _name);
-
-  /// Destructor
-  virtual ~SingleDofJoint();
-
   // Documentation inherited
   DEPRECATED(4.1) virtual size_t getDof() const;
 
@@ -259,6 +253,12 @@ public:
   virtual double getPotentialEnergy() const;
 
 protected:
+  /// Constructor
+  SingleDofJoint(const std::string& _name);
+
+  /// Destructor
+  virtual ~SingleDofJoint();
+
   //----------------------------------------------------------------------------
   // Recursive dynamics algorithms
   //----------------------------------------------------------------------------

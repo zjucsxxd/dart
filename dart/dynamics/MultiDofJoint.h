@@ -56,12 +56,6 @@ template<size_t DOF>
 class MultiDofJoint : public Joint
 {
 public:
-  /// Constructor
-  MultiDofJoint(const std::string& _name);
-
-  /// Destructor
-  virtual ~MultiDofJoint();
-
   //----------------------------------------------------------------------------
   // Interface for generalized coordinates
   //----------------------------------------------------------------------------
@@ -266,6 +260,12 @@ public:
   virtual double getPotentialEnergy() const;
 
 protected:
+  /// Constructor
+  MultiDofJoint(const std::string& _name);
+
+  /// Destructor
+  virtual ~MultiDofJoint();
+
   //----------------------------------------------------------------------------
   // Recursive dynamics algorithms
   //----------------------------------------------------------------------------

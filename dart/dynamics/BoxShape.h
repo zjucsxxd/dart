@@ -39,6 +39,7 @@
 #define DART_DYNAMICS_BOXSHAPE_H_
 
 #include "dart/common/Deprecated.h"
+#include "dart/common/Factory.h"
 #include "dart/dynamics/Shape.h"
 
 namespace dart {
@@ -47,6 +48,7 @@ namespace dynamics {
 class BoxShape : public Shape {
 public:
   /// \brief Constructor.
+  /// \warning This function is deprecated since DART 4.3.
   explicit BoxShape(const Eigen::Vector3d& _size);
 
   /// \brief Destructor.
@@ -82,6 +84,9 @@ public:
   // To get byte-aligned Eigen vectors
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
+// Register to the joint factory
+//DART_FACTORY_REGISTER(Shape, BoxShape, "BoxShape")
 
 }  // namespace dynamics
 }  // namespace dart

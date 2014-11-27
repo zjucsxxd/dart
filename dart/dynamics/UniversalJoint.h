@@ -41,6 +41,7 @@
 
 #include <Eigen/Dense>
 
+#include "dart/common/Factory.h"
 #include "dart/dynamics/MultiDofJoint.h"
 
 namespace dart {
@@ -50,12 +51,15 @@ namespace dynamics {
 class UniversalJoint : public MultiDofJoint<2>
 {
 public:
-  /// Constructor
+  /// \brief Constructor
+  /// \warning This function will turn to protected member since DART 5.0.
+  /// Please use Skeleton::createJoint() to create joint.
   UniversalJoint(const Eigen::Vector3d& _axis0 = Eigen::Vector3d::UnitX(),
                  const Eigen::Vector3d& _axis1 = Eigen::Vector3d::UnitY(),
                  const std::string& _name = "Universal joint");
 
-  /// Destructor
+  /// brief Destructor
+  /// \warning This function will turn to protected member since DART 5.0.
   virtual ~UniversalJoint();
 
   ///
@@ -94,6 +98,9 @@ public:
   // To get byte-aligned Eigen vectors
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
+// Register to the joint factory
+DART_FACTORY_REGISTER(Joint, UniversalJoint, "UniversalJoint")
 
 }  // namespace dynamics
 }  // namespace dart

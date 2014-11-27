@@ -37,6 +37,8 @@
 #ifndef DART_COMMON_SINGLETON_H_
 #define DART_COMMON_SINGLETON_H_
 
+#include <utility>
+
 namespace dart {
 namespace common {
 

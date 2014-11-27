@@ -39,6 +39,7 @@
 
 #include <Eigen/Dense>
 
+#include "dart/common/Factory.h"
 #include "dart/dynamics/MultiDofJoint.h"
 
 namespace dart {
@@ -48,10 +49,13 @@ namespace dynamics {
 class BallJoint : public MultiDofJoint<3>
 {
 public:
-  /// Constructor
+  /// \brief Constructor
+  /// \warning This function will turn to protected member since DART 5.0.
+  /// Please use Skeleton::createJoint() to create joint.
   explicit BallJoint(const std::string& _name = "BallJoint");
 
-  /// Destructor
+  /// brief Destructor
+  /// \warning This function will turn to protected member since DART 5.0.
   virtual ~BallJoint();
 
   // Documentation inherited
@@ -84,6 +88,9 @@ public:
   // To get byte-aligned Eigen vectors
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
+// Register to the joint factory
+DART_FACTORY_REGISTER(Joint, BallJoint, "BallJoint")
 
 }  // namespace dynamics
 }  // namespace dart

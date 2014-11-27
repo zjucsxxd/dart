@@ -135,6 +135,26 @@ public:
   // Structueral Properties
   //----------------------------------------------------------------------------
 
+  /// \brief Create a BodyNode
+  /// \return BodyNode pointer if the BodyNode was created, or nullptr if not
+  BodyNode* createBodyNode();
+
+  /// \brief Create a BodyNode with a given name
+  /// \return BodyNode pointer if the BodyNode was created, or nullptr if not
+  BodyNode* createBodyNode(const std::string& _name);
+
+  /// \brief Destroy a BodyNode with a given BodyNode pointer
+  /// \return True on success, or false otherwise
+  bool destroyBodyNode(BodyNode* _bodyNode);
+
+  /// \brief Destroy a BodyNode with a given name
+  /// \return True on success, or false otherwise
+  bool destroyBodyNode(const std::string& _name);
+
+  /// \brief Destroy all the BodyNodes
+  /// \return True on success, or false otherwise
+  bool destroyAllBodyNodes();
+
   /// Add a body node
   void addBodyNode(BodyNode* _body);
 
@@ -161,6 +181,30 @@ public:
 
   /// Get soft body node.
   SoftBodyNode* getSoftBodyNode(const std::string& _name) const;
+
+  /// \brief Create a Joint with type and automatically generated name
+  /// \param[in] _type Type name of the Joint to be created. By default, the
+  /// type names of all the built-in joint classes are the class names itself.
+  /// For example, RevoluteJoint will be created with "RevoluteJoint" type name.
+  Joint* createJoint(const std::string& _type);
+
+  /// \brief Create a Joint with type and name
+  /// \param[in] _type Type name of the Joint to be created. By default, the
+  /// type names of all the built-in joint classes are the class names itself.
+  /// For example, RevoluteJoint will be created with "RevoluteJoint" type name.
+  Joint* createJoint(const std::string& _type, const std::string& _name);
+
+  /// \brief Destroy a Joint with a given Joint pointer
+  /// \return True on success, or false otherwise
+  bool destroyJoint(Joint* _joint);
+
+  /// \brief Destroy a Joint with a given name
+  /// \return True on success, or false otherwise
+  bool destroyJoint(const std::string& _name);
+
+  /// \brief Destroy all the Joints
+  /// \return True on success, or false otherwise
+  bool destroyAllJoints();
 
   /// Get joint whose index is _idx
   Joint* getJoint(size_t _idx) const;
@@ -457,28 +501,28 @@ public:
   const Eigen::MatrixXd& getInvAugMassMatrix();
 
   /// Get Coriolis force vector of the skeleton.
-  /// \remarks Please use getCoriolisForces() instead.
+  /// \warning Please use getCoriolisForces() instead.
   DEPRECATED(4.2) const Eigen::VectorXd& getCoriolisForceVector();
 
   /// Get Coriolis force vector of the skeleton.
   const Eigen::VectorXd& getCoriolisForces();
 
   /// Get gravity force vector of the skeleton.
-  /// \remarks Please use getGravityForces() instead.
+  /// \warning Please use getGravityForces() instead.
   DEPRECATED(4.2) const Eigen::VectorXd& getGravityForceVector();
 
   /// Get gravity force vector of the skeleton.
   const Eigen::VectorXd& getGravityForces();
 
   /// Get combined vector of Coriolis force and gravity force of the skeleton.
-  /// \remarks Please use getCoriolisAndGravityForces() instead.
+  /// \warning Please use getCoriolisAndGravityForces() instead.
   DEPRECATED(4.2) const Eigen::VectorXd& getCombinedVector();
 
   /// Get combined vector of Coriolis force and gravity force of the skeleton.
   const Eigen::VectorXd& getCoriolisAndGravityForces();
 
   /// Get external force vector of the skeleton.
-  /// \remarks Please use getExternalForces() instead.
+  /// \warning Please use getExternalForces() instead.
   DEPRECATED(4.2) const Eigen::VectorXd& getExternalForceVector();
 
   /// Get external force vector of the skeleton.
@@ -488,7 +532,7 @@ public:
 //  const Eigen::VectorXd& getDampingForceVector();
 
   /// Get constraint force vector.
-  /// \remarks Please use getConstraintForces() instead.
+  /// \warning Please use getConstraintForces() instead.
   DEPRECATED(4.2) const Eigen::VectorXd& getConstraintForceVector();
 
   /// Get constraint force vector.
@@ -575,28 +619,28 @@ protected:
   void updateInvAugMassMatrix();
 
   /// Update Coriolis force vector of the skeleton.
-  /// \remarks Please use updateCoriolisForces() instead.
+  /// \warning Please use updateCoriolisForces() instead.
   DEPRECATED(4.2) virtual void updateCoriolisForceVector();
 
   /// Update Coriolis force vector of the skeleton.
   void updateCoriolisForces();
 
   /// Update gravity force vector of the skeleton.
-  /// \remarks Please use updateGravityForces() instead.
+  /// \warning Please use updateGravityForces() instead.
   DEPRECATED(4.2) virtual void updateGravityForceVector();
 
   /// Update gravity force vector of the skeleton.
   void updateGravityForces();
 
   /// Update combined vector of the skeletong.
-  /// \remarks Please use updateCoriolisAndGravityForces() instead.
+  /// \warning Please use updateCoriolisAndGravityForces() instead.
   DEPRECATED(4.2) virtual void updateCombinedVector();
 
   /// Update combined vector of the skeletong.
   void updateCoriolisAndGravityForces();
 
   /// update external force vector to generalized torques.
-  /// \remarks Please use updateExternalForces() instead.
+  /// \warning Please use updateExternalForces() instead.
   DEPRECATED(4.2) virtual void updateExternalForceVector();
 
   // TODO(JS): Not implemented yet

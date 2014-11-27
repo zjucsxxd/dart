@@ -60,9 +60,6 @@ class Skeleton;
 class Joint
 {
 public:
-  /// Constructor
-  explicit Joint(const std::string& _name = "Joint");
-
   /// Destructor
   virtual ~Joint();
 
@@ -356,6 +353,14 @@ public:
   /// \sa BodyNode::updateArticulatedInertia(double).
 //  Eigen::VectorXd getDampingForces() const;
 
+  /// \brief Downcast
+  template <class T>
+  T* as()
+  {
+    assert(dynamic_cast<T*>(this) != nullptr);
+    return static_cast<T*>(this);
+  }
+
   //----------------------------------------------------------------------------
   // Rendering
   //----------------------------------------------------------------------------
@@ -372,6 +377,9 @@ public:
   friend class Skeleton;
 
 protected:
+  /// Constructor
+  explicit Joint(const std::string& _name = "Joint");
+
   /// Initialize this joint. This function is called by BodyNode::init()
   virtual void init(Skeleton* _skel);
 

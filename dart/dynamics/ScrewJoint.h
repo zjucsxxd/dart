@@ -41,6 +41,7 @@
 
 #include <Eigen/Dense>
 
+#include "dart/common/Factory.h"
 #include "dart/dynamics/SingleDofJoint.h"
 
 namespace dart {
@@ -50,12 +51,15 @@ namespace dynamics {
 class ScrewJoint : public SingleDofJoint
 {
 public:
-  /// Constructor
+  /// \brief Constructor
+  /// \warning This function will turn to protected member since DART 5.0.
+  /// Please use Skeleton::createJoint() to create joint.
   ScrewJoint(const Eigen::Vector3d& axis = Eigen::Vector3d(1.0, 0.0, 0.0),
              double _pitch = 0.1,
              const std::string& _name = "ScrewJoint");
 
-  /// Destructor
+  /// brief Destructor
+  /// \warning This function will turn to protected member since DART 5.0.
   virtual ~ScrewJoint();
 
   ///
@@ -97,6 +101,9 @@ public:
   // To get byte-aligned Eigen vectors
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
+// Register to the joint factory
+DART_FACTORY_REGISTER(Joint, ScrewJoint, "ScrewJoint")
 
 }  // namespace dynamics
 }  // namespace dart

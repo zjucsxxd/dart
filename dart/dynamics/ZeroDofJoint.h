@@ -51,12 +51,6 @@ class Skeleton;
 class ZeroDofJoint : public Joint
 {
 public:
-  /// Constructor
-  ZeroDofJoint(const std::string& _name);
-
-  /// Destructor
-  virtual ~ZeroDofJoint();
-
   //----------------------------------------------------------------------------
   // Interface for generalized coordinates
   //----------------------------------------------------------------------------
@@ -261,6 +255,12 @@ public:
   virtual double getPotentialEnergy() const;
 
 protected:
+  /// Constructor
+  ZeroDofJoint(const std::string& _name);
+
+  /// Destructor
+  virtual ~ZeroDofJoint();
+
   //----------------------------------------------------------------------------
   // Recursive dynamics algorithms
   //----------------------------------------------------------------------------

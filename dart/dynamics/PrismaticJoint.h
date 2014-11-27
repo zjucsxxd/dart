@@ -41,6 +41,7 @@
 
 #include <Eigen/Dense>
 
+#include "dart/common/Factory.h"
 #include "dart/dynamics/SingleDofJoint.h"
 
 namespace dart {
@@ -50,11 +51,14 @@ namespace dynamics {
 class PrismaticJoint : public SingleDofJoint
 {
 public:
-  /// Constructor
+  /// \brief Constructor
+  /// \warning This function will turn to protected member since DART 5.0.
+  /// Please use Skeleton::createJoint() to create joint.
   PrismaticJoint(const Eigen::Vector3d& axis = Eigen::Vector3d(1.0, 0.0, 0.0),
                  const std::string& _name = "Noname PrismaticJoint");
 
-  /// Destructor
+  /// brief Destructor
+  /// \warning This function will turn to protected member since DART 5.0.
   virtual ~PrismaticJoint();
 
   ///
@@ -87,6 +91,9 @@ public:
   // To get byte-aligned Eigen vectors
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
+// Register to the joint factory
+DART_FACTORY_REGISTER(Joint, PrismaticJoint, "PrismaticJoint")
 
 }  // namespace dynamics
 }  // namespace dart

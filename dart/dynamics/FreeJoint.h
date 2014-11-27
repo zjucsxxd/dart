@@ -41,6 +41,7 @@
 
 #include <Eigen/Dense>
 
+#include "dart/common/Factory.h"
 #include "dart/dynamics/MultiDofJoint.h"
 
 namespace dart {
@@ -50,10 +51,13 @@ namespace dynamics {
 class FreeJoint : public MultiDofJoint<6>
 {
 public:
-  /// Constructor
+  /// \brief Constructor
+  /// \warning This function will turn to protected member since DART 5.0.
+  /// Please use Skeleton::createJoint() to create joint.
   explicit FreeJoint(const std::string& _name = "FreeJoint");
 
-  /// Destructor
+  /// brief Destructor
+  /// \warning This function will turn to protected member since DART 5.0.
   virtual ~FreeJoint();
 
   // Documentation inherited
@@ -86,6 +90,9 @@ public:
   // To get byte-aligned Eigen vectors
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
+// Register to the joint factory
+DART_FACTORY_REGISTER(Joint, FreeJoint, "FreeJoint")
 
 }  // namespace dynamics
 }  // namespace dart
