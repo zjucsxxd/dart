@@ -85,6 +85,34 @@ void FreeJoint::setTransformFromChildBodyNode(const Eigen::Isometry3d& _T)
 }
 
 //==============================================================================
+void FreeJoint::setPosition(size_t _index, double _position)
+{
+  if (_index >= getNumDofs())
+  {
+    dterr << "setPosition index[" << _index << "] out of range" << std::endl;
+    return;
+  }
+
+  // TODO: more efficient way?
+  Eigen::Vector6d pos = getPositions();
+  pos[_index] = _position;
+  setPositions(pos);
+}
+
+//==============================================================================
+double FreeJoint::getPosition(size_t _index) const
+{
+  if (_index >= getNumDofs())
+  {
+    dterr << "setPosition index[" << _index << "] out of range" << std::endl;
+    return 0.0;
+  }
+
+  // TODO: more efficient way?
+  return getPositions()[_index];
+}
+
+//==============================================================================
 void FreeJoint::setPositions(const Eigen::VectorXd& _positions)
 {
   assert(mSkeleton != NULL);
@@ -157,20 +185,20 @@ Eigen::VectorXd FreeJoint::getPositions() const
       genPositions.tail<3>() = math::logMap(mQ.linear());
       break;
     case TransformGenCoordType::POSITION_AND_EULER_INTRINSIC_XYZ:
-      genPositions.head<3>() = math::matrixToEulerXYZ(mQ.linear());
-      genPositions.tail<3>() = math::logMap(mQ.linear());
+      genPositions.head<3>() = mQ.translation();
+      genPositions.tail<3>() = math::matrixToEulerXYZ(mQ.linear());
       break;
     case TransformGenCoordType::POSITION_AND_EULER_INTRINSIC_ZYX:
-      genPositions.head<3>() = math::matrixToEulerZYX(mQ.linear());
-      genPositions.tail<3>() = math::logMap(mQ.linear());
+      genPositions.head<3>() = mQ.translation();
+      genPositions.tail<3>() = math::matrixToEulerZYX(mQ.linear());
       break;
     case TransformGenCoordType::POSITION_AND_EULER_EXTRINSIC_XYZ:
-      genPositions.head<3>() = math::matrixToEulerZYX(mQ.linear()).reverse();
-      genPositions.tail<3>() = math::logMap(mQ.linear());
+      genPositions.head<3>() = mQ.translation();
+      genPositions.tail<3>() = math::matrixToEulerZYX(mQ.linear()).reverse();
       break;
     case TransformGenCoordType::POSITION_AND_EULER_EXTRINSIC_ZYX:
-      genPositions.head<3>() = math::matrixToEulerXYZ(mQ.linear()).reverse();
-      genPositions.tail<3>() = math::logMap(mQ.linear());
+      genPositions.head<3>() = mQ.translation();
+      genPositions.tail<3>() = math::matrixToEulerXYZ(mQ.linear()).reverse();
       break;
     default:
       dterr << "Invalid generalized coordinate type for transformation matrix."

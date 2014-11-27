@@ -400,8 +400,10 @@ TEST_F(Joints, POSITION_LIMIT)
 }
 
 //==============================================================================
-TEST_F(Joints, GenCoordTypes)
+TEST_F(Joints, RotationGenCoordTypes)
 {
+  // Build test skeleton
+  const double tol = 1e-12;
   Skeleton* skel = new Skeleton();
   BodyNode* bodyNode = new BodyNode();
   BallJoint* ballJoint = new BallJoint();
@@ -409,24 +411,120 @@ TEST_F(Joints, GenCoordTypes)
   skel->addBodyNode(bodyNode);
   skel->init();
 
-  Eigen::Vector3d genCoords;
-
-  EXPECT_EQ(bodyNode->getTransform().matrix(),
-            Eigen::Isometry3d::Identity().matrix());
-
+  // Set random positions for the ball joint
   Eigen::Matrix3d R = math::expMapRot(Eigen::Vector3d::Random());
   skel->setRotationGenCoordType(RotationGenCoordType::SO3_LIE_ALGEBRA);
   skel->setPositions(math::logMap(R));
 
+  //----------------------------------------------------------------------------
+  // Test for all the rotation generalized coordinate types
+  //----------------------------------------------------------------------------
+  Eigen::Vector3d genCoords1;
+  Eigen::Vector3d genCoords2;
+
+  skel->setRotationGenCoordType(RotationGenCoordType::SO3_LIE_ALGEBRA);
+  genCoords1 = skel->getPositions();
+  genCoords2 = math::logMap(R);
+  EXPECT_NEAR(genCoords1[0], genCoords2[0], tol);
+  EXPECT_NEAR(genCoords1[1], genCoords2[1], tol);
+  EXPECT_NEAR(genCoords1[2], genCoords2[2], tol);
+
+  skel->setRotationGenCoordType(RotationGenCoordType::EULER_INTRINSIC_XYZ);
+  genCoords1 = skel->getPositions();
+  genCoords2 = math::matrixToEulerXYZ(R);
+  EXPECT_NEAR(genCoords1[0], genCoords2[0], tol);
+  EXPECT_NEAR(genCoords1[1], genCoords2[1], tol);
+  EXPECT_NEAR(genCoords1[2], genCoords2[2], tol);
+
+  skel->setRotationGenCoordType(RotationGenCoordType::EULER_INTRINSIC_ZYX);
+  genCoords1 = skel->getPositions();
+  genCoords2 = math::matrixToEulerZYX(R);
+  EXPECT_NEAR(genCoords1[0], genCoords2[0], tol);
+  EXPECT_NEAR(genCoords1[1], genCoords2[1], tol);
+  EXPECT_NEAR(genCoords1[2], genCoords2[2], tol);
+
   skel->setRotationGenCoordType(RotationGenCoordType::EULER_EXTRINSIC_XYZ);
-  genCoords = skel->getPositions();
+  genCoords1 = skel->getPositions();
+  genCoords2 = math::matrixToEulerZYX(R).reverse();
+  EXPECT_NEAR(genCoords1[0], genCoords2[0], tol);
+  EXPECT_NEAR(genCoords1[1], genCoords2[1], tol);
+  EXPECT_NEAR(genCoords1[2], genCoords2[2], tol);
 
-  cout << "dof: " << genCoords.size() << endl;
-  cout << "genCoords          : " << genCoords.transpose() << endl;
-  cout << "matrixToEulerXYZ(R): " << matrixToEulerXYZ(R).transpose() << endl;
-  cout << "logMap(R)          : " << logMap(R).transpose() << endl;
+  skel->setRotationGenCoordType(RotationGenCoordType::EULER_EXTRINSIC_ZYX);
+  genCoords1 = skel->getPositions();
+  genCoords2 = math::matrixToEulerXYZ(R).reverse();
+  EXPECT_NEAR(genCoords1[0], genCoords2[0], tol);
+  EXPECT_NEAR(genCoords1[1], genCoords2[1], tol);
+  EXPECT_NEAR(genCoords1[2], genCoords2[2], tol);
 
-  EXPECT_EQ(genCoords, math::matrixToEulerXYZ(R));
+  delete skel;
+}
+
+//==============================================================================
+TEST_F(Joints, TransformGenCoordTypes)
+{
+  // Build test skeleton
+  const double tol = 1e-12;
+  Skeleton* skel = new Skeleton();
+  BodyNode* bodyNode = new BodyNode();
+  FreeJoint* ballJoint = new FreeJoint();
+  bodyNode->setParentJoint(ballJoint);
+  skel->addBodyNode(bodyNode);
+  skel->init();
+
+  // Set random positions for the ball joint
+  Eigen::Isometry3d T;
+  T.linear() = math::expMapRot(Eigen::Vector3d::Random());
+  T.translation() = Eigen::Vector3d::Random();
+  skel->setTransformGenCoordType(TransformGenCoordType::SE3_LIE_ALGEBRA);
+  skel->setPositions(math::logMap(T));
+
+  //----------------------------------------------------------------------------
+  // Test for all the rotation generalized coordinate types
+  //----------------------------------------------------------------------------
+  Eigen::Vector6d genCoords1;
+  Eigen::Vector6d genCoords2;
+
+  skel->setTransformGenCoordType(TransformGenCoordType::SE3_LIE_ALGEBRA);
+  genCoords1 = skel->getPositions();
+  genCoords2 = math::logMap(T);
+  EXPECT_TRUE(equals(genCoords1, genCoords2, tol));
+
+  skel->setTransformGenCoordType(TransformGenCoordType::SO3_LIE_ALGEBRA_AND_POSITION);
+  genCoords1 = skel->getPositions();
+  genCoords2.head<3>() = math::logMap(T.linear());
+  genCoords2.tail<3>() = T.translation();
+  EXPECT_TRUE(equals(genCoords1, genCoords2, tol));
+
+  skel->setTransformGenCoordType(TransformGenCoordType::POSITION_AND_SO3_LIE_ALGEBRA);
+  genCoords1 = skel->getPositions();
+  genCoords2.head<3>() = T.translation();
+  genCoords2.tail<3>() = math::logMap(T.linear());
+  EXPECT_TRUE(equals(genCoords1, genCoords2, tol));
+
+  skel->setTransformGenCoordType(TransformGenCoordType::POSITION_AND_EULER_INTRINSIC_XYZ);
+  genCoords1 = skel->getPositions();
+  genCoords2.head<3>() = T.translation();
+  genCoords2.tail<3>() = math::matrixToEulerXYZ(T.linear());
+  EXPECT_TRUE(equals(genCoords1, genCoords2, tol));
+
+  skel->setTransformGenCoordType(TransformGenCoordType::POSITION_AND_EULER_INTRINSIC_ZYX);
+  genCoords1 = skel->getPositions();
+  genCoords2.head<3>() = T.translation();
+  genCoords2.tail<3>() = math::matrixToEulerZYX(T.linear());
+  EXPECT_TRUE(equals(genCoords1, genCoords2, tol));
+
+  skel->setTransformGenCoordType(TransformGenCoordType::POSITION_AND_EULER_EXTRINSIC_XYZ);
+  genCoords1 = skel->getPositions();
+  genCoords2.head<3>() = T.translation();
+  genCoords2.tail<3>() = math::matrixToEulerZYX(T.linear()).reverse();
+  EXPECT_TRUE(equals(genCoords1, genCoords2, tol));
+
+  skel->setTransformGenCoordType(TransformGenCoordType::POSITION_AND_EULER_EXTRINSIC_ZYX);
+  genCoords1 = skel->getPositions();
+  genCoords2.head<3>() = T.translation();
+  genCoords2.tail<3>() = math::matrixToEulerXYZ(T.linear()).reverse();
+  EXPECT_TRUE(equals(genCoords1, genCoords2, tol));
 
   delete skel;
 }

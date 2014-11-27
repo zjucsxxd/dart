@@ -64,6 +64,12 @@ public:
   }
 
   // Documentation inherited
+  virtual void setPosition(size_t _index, double _position);
+
+  // Documentation inherited
+  virtual double getPosition(size_t _index) const;
+
+  // Documentation inherited
   virtual void setPositions(const Eigen::VectorXd& _positions);
 
   // Documentation inherited

@@ -85,6 +85,34 @@ void BallJoint::setTransformFromChildBodyNode(const Eigen::Isometry3d& _T)
 }
 
 //==============================================================================
+void BallJoint::setPosition(size_t _index, double _position)
+{
+  if (_index >= getNumDofs())
+  {
+    dterr << "setPosition index[" << _index << "] out of range" << std::endl;
+    return;
+  }
+
+  // TODO: more efficient way?
+  Eigen::Vector3d pos = getPositions();
+  pos[_index] = _position;
+  setPositions(pos);
+}
+
+//==============================================================================
+double BallJoint::getPosition(size_t _index) const
+{
+  if (_index >= getNumDofs())
+  {
+    dterr << "setPosition index[" << _index << "] out of range" << std::endl;
+    return 0.0;
+  }
+
+  // TODO: more efficient way?
+  return getPositions()[_index];
+}
+
+//==============================================================================
 void BallJoint::setPositions(const Eigen::VectorXd& _positions)
 {
   assert(mSkeleton != NULL);
