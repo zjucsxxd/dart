@@ -104,7 +104,7 @@ double BallJoint::getPosition(size_t _index) const
 {
   if (_index >= getNumDofs())
   {
-    dterr << "setPosition index[" << _index << "] out of range" << std::endl;
+    dterr << "getPosition index[" << _index << "] out of range" << std::endl;
     return 0.0;
   }
 
@@ -115,7 +115,6 @@ double BallJoint::getPosition(size_t _index) const
 //==============================================================================
 void BallJoint::setPositions(const Eigen::VectorXd& _positions)
 {
-  assert(mSkeleton != NULL);
   assert(_positions.size() == 3);
 
   if (_positions.size() != (int)getNumDofs())
