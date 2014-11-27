@@ -351,6 +351,12 @@ void BodyNode::addChildBodyNode(BodyNode* _body)
 }
 
 //==============================================================================
+BodyNode* BodyNode::createChildBodyNode(const std::string& _jointType)
+{
+  return mSkeleton->createBodyNode(this, _jointType);
+}
+
+//==============================================================================
 BodyNode* BodyNode::getChildBodyNode(size_t _index) const
 {
   assert(0 <= _index && _index < mChildBodyNodes.size());

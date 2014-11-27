@@ -61,6 +61,8 @@ Skeleton::Skeleton(const std::string& _name)
     mDof(0),
     mEnabledSelfCollisionCheck(false),
     mEnabledAdjacentBodyCheck(false),
+    mIsAssembling(false),
+    mIsAssembled(true),
     mIsMobile(true),
     mTimeStep(0.001),
     mGravity(Eigen::Vector3d(0.0, 0.0, -9.81)),
@@ -173,109 +175,107 @@ double Skeleton::getMass() const
 }
 
 //==============================================================================
-BodyNode* Skeleton::createBodyNode()
+BodyNode* Skeleton::createRootBodyNode(const std::string& _jointType)
 {
-//  const std::string& name = mNameMgr.issueNewName("BodyNode");
-  const std::string& name = "BodyNode";
-
-  return createBodyNode(name);
-}
-
-//==============================================================================
-BodyNode* Skeleton::createBodyNode(const std::string& _name)
-{
-  if (_name.empty())
+  if (!mBodyNodes.empty())
   {
-    dtwarn << "Empty name is not allowed." << std::endl;
+    dterr << "Root body node already exists." << std::endl;
     return nullptr;
   }
 
-  // Check duplicity
-//  if (mNameMgr.hasName(_name))
-//  {
-//    dtwarn << "Can't create BodyNode[" << _name
-//           << "] since it was already created with the given name."
-//           << std::endl;
-//    return nullptr;
-//  }
-
-  // Check if the given type is a inheritance of Joint class
-//  assert(ObjectFactory::validateType<BodyNode>("BodyNode"));
-
-  // Create new BodyNode
-//  BodyNode* newBodyNode = static_cast<BodyNode*>(ObjectFactory::createObject("BodyNode"));
   BodyNode* newBodyNode = new BodyNode();
-//  newBodyNode->setSkeleton(this);
-//  newBodyNode->init(this);
-  newBodyNode->mSkeleton = this;
-  newBodyNode->setName(_name);
+  Joint*    newJoint    = common::Factory<Joint>::createObject(_jointType);
 
-  // Add the name to the NameManager
-//  mNameMgr.addName(_name, newBodyNode);
+  // TODO(JS): when newJoint is nullptr
 
-//  mBodyNodePool.push_back(newBodyNode);
+  newBodyNode->setParentJoint(newJoint);
 
-//  if (mBaseBodyNode == nullptr)
-//    mBaseBodyNode = newBodyNode;
+  mBodyNodes.push_back(newBodyNode);
+
+  if (!mIsAssembling)
+    assemble();
 
   return newBodyNode;
 }
 
 //==============================================================================
-bool Skeleton::destroyBodyNode(BodyNode* _bodyNode)
+BodyNode* Skeleton::createBodyNode(BodyNode* _parentBodyNode,
+                                   const std::string& _jointType)
 {
-  assert(_bodyNode != nullptr);
+  if (_parentBodyNode == nullptr)
+    return createRootBodyNode(_jointType);
 
-//  auto res = std::find(mBodyNodes.begin(), mBodyNodes.end(), _bodyNode);
+  BodyNode* newBodyNode = new BodyNode();
+  Joint*    newJoint    = common::Factory<Joint>::createObject(_jointType);
 
-//  if (res != mBodyNodes.end())
-//  {
-//    mBodyNodes.erase(res);
+  // TODO(JS): when newJoint is nullptr
 
-//    assert(mNameMgr.hasName(_bodyNode->getName()));
-//    mNameMgr.removeName(_bodyNode->getName());
+  newBodyNode->setParentJoint(newJoint);
+  _parentBodyNode->addChildBodyNode(newBodyNode);
 
-//    if (_bodyNode == mBaseBodyNode)
-//    {
-//      if (!mBodyNodes.empty())
-//        mBaseBodyNode = mBodyNodes[0];
-//      else
-//        mBaseBodyNode = nullptr;
-//    }
+  mBodyNodes.push_back(newBodyNode);
 
-//    delete _bodyNode;
-//    return true;
-//  }
-//  else
-//  {
-    return false;
-//  }
+  if (!mIsAssembling)
+    assemble();
+
+  return newBodyNode;
 }
 
-//==============================================================================
-bool Skeleton::destroyBodyNode(const std::string& _name)
-{
-//  BodyNode* body = getBodyNode(_name);
+////==============================================================================
+//bool Skeleton::destroyBodyNode(BodyNode* _bodyNode)
+//{
+//  assert(_bodyNode != nullptr);
 
-//  if (body != nullptr)
-//    return destroyBodyNode(body);
-//  else
-    return false;
-}
+//  //  auto res = std::find(mBodyNodes.begin(), mBodyNodes.end(), _bodyNode);
 
-//==============================================================================
-bool Skeleton::destroyAllBodyNodes()
-{
-//  for (const auto& body : mBodyNodes)
-//  {
-//    mNameMgr.removeName(body->getName());
-//    delete body;
-//  }
+////  if (res != mBodyNodes.end())
+////  {
+////    mBodyNodes.erase(res);
 
-//  mBodyNodes.clear();
+////    assert(mNameMgr.hasName(_bodyNode->getName()));
+////    mNameMgr.removeName(_bodyNode->getName());
 
-  return true;
-}
+////    if (_bodyNode == mBaseBodyNode)
+////    {
+////      if (!mBodyNodes.empty())
+////        mBaseBodyNode = mBodyNodes[0];
+////      else
+////        mBaseBodyNode = nullptr;
+////    }
+
+////    delete _bodyNode;
+////    return true;
+////  }
+////  else
+////  {
+//    return false;
+////  }
+//}
+
+////==============================================================================
+//bool Skeleton::destroyBodyNode(const std::string& _name)
+//{
+////  BodyNode* body = getBodyNode(_name);
+
+////  if (body != nullptr)
+////    return destroyBodyNode(body);
+////  else
+//    return false;
+//}
+
+////==============================================================================
+//bool Skeleton::destroyAllBodyNodes()
+//{
+////  for (const auto& body : mBodyNodes)
+////  {
+////    mNameMgr.removeName(body->getName());
+////    delete body;
+////  }
+
+////  mBodyNodes.clear();
+
+//  return true;
+//}
 
 //==============================================================================
 void Skeleton::addBodyNode(BodyNode* _body)
@@ -355,90 +355,6 @@ SoftBodyNode* Skeleton::getSoftBodyNode(const std::string& _name) const
   }
 
   return NULL;
-}
-
-//==============================================================================
-Joint* Skeleton::createJoint(const std::string& _type)
-{
-//  const std::string& name = mNameMgr.issueNewName("Joint");
-  const std::string& name = "Joint";
-
-  return createJoint(_type, name);
-}
-
-//==============================================================================
-Joint* Skeleton::createJoint(const std::string& _type, const std::string& _name)
-{
-  // Check if the given type is a inheritance of Joint class
-//  assert(ObjectFactory::validateType<Joint>(_type));
-
-//  Joint* newJoint = static_cast<Joint*>(ObjectFactory::createObject(_type));
-  Joint* newJoint = common::Factory<Joint>::createObject(_type);
-
-  if (newJoint == nullptr)
-  {
-    dtdbg << "Fail to create joint [type:" << _type << ", name:" << _name
-          << "].\n";
-    return nullptr;
-  }
-
-  // Issue new name and set it
-  // newJoint->setSkeleton(this);
-//  newJoint->setSkeleton(this);
-  newJoint->init(this);
-  newJoint->setName(_name);
-
-//  mJointPool.push_back(newJoint);
-
-  return newJoint;
-}
-
-//==============================================================================
-bool Skeleton::destroyJoint(Joint* _joint)
-{
-  assert(_joint != nullptr);
-
-//  auto res = std::find(mJointPool.begin(), mJointPool.end(), _joint);
-
-//  if (res != mJointPool.end())
-//  {
-//    mJointPool.erase(res);
-
-//    assert(mNameMgr.hasName(_joint->getName()));
-//    mNameMgr.removeName(_joint->getName());
-
-//    delete _joint;
-//    return true;
-//  }
-//  else
-//  {
-    return false;
-//  }
-}
-
-//==============================================================================
-bool Skeleton::destroyJoint(const std::string& _name)
-{
-//  Joint* joint = getJoint(_name);
-
-//  if (joint != nullptr)
-//    return destroyJoint(joint);
-//  else
-    return false;
-}
-
-//==============================================================================
-bool Skeleton::destroyAllJoints()
-{
-//  for (const auto& joint : mJointPool)
-//  {
-//    mNameMgr.removeName(joint->getName());
-//    delete joint;
-//  }
-
-//  mJointPool.clear();
-
-  return true;
 }
 
 //==============================================================================
@@ -1853,6 +1769,15 @@ void Skeleton::computeInverseDynamicsRecursionB(bool _withExternalForces,
     (*it)->updateBodyWrench(mGravity, _withExternalForces);
     (*it)->updateGeneralizedForce(_withDampingForces);
   }
+}
+
+//==============================================================================
+void Skeleton::assemble()
+{
+  if (mIsAssembled)
+    return;
+
+  mIsAssembled = true;
 }
 
 //==============================================================================

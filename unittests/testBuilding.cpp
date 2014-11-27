@@ -43,11 +43,15 @@
 #include "dart/dynamics/RevoluteJoint.h"
 #include "dart/dynamics/Skeleton.h"
 #include "dart/simulation/World.h"
+#include "dart/utils/SkeletonBuilder.h"
+
+using namespace Eigen;
 
 using namespace dart;
 using namespace math;
 using namespace dynamics;
 using namespace simulation;
+using namespace utils;
 
 //==============================================================================
 TEST(Building, Basic)
@@ -83,17 +87,17 @@ TEST(Building, Basic)
   body3->setParentJoint(joint3);
 
   // Joints
-  joint1->setTransformFromParentBodyNode(Eigen::Isometry3d::Identity());
-  joint1->setTransformFromChildBodyNode(Eigen::Isometry3d::Identity());
-  joint1->setAxis(Eigen::Vector3d(1.0, 0.0, 0.0));
+  joint1->setTransformFromParentBodyNode(Isometry3d::Identity());
+  joint1->setTransformFromChildBodyNode(Isometry3d::Identity());
+  joint1->setAxis(Vector3d(1.0, 0.0, 0.0));
 
-  joint2->setTransformFromParentBodyNode(Eigen::Isometry3d::Identity());
-  joint2->setTransformFromChildBodyNode(Eigen::Isometry3d::Identity());
-  joint2->setAxis(Eigen::Vector3d(1.0, 0.0, 0.0));
+  joint2->setTransformFromParentBodyNode(Isometry3d::Identity());
+  joint2->setTransformFromChildBodyNode(Isometry3d::Identity());
+  joint2->setAxis(Vector3d(1.0, 0.0, 0.0));
 
-  joint3->setTransformFromParentBodyNode(Eigen::Isometry3d::Identity());
-  joint3->setTransformFromChildBodyNode(Eigen::Isometry3d::Identity());
-  joint3->setAxis(Eigen::Vector3d(1.0, 0.0, 0.0));
+  joint3->setTransformFromParentBodyNode(Isometry3d::Identity());
+  joint3->setTransformFromChildBodyNode(Isometry3d::Identity());
+  joint3->setAxis(Vector3d(1.0, 0.0, 0.0));
 
   // Skeleton
   skel1->addBodyNode(body1);
@@ -131,18 +135,71 @@ TEST(Building, Basic)
 }
 
 //==============================================================================
-TEST(Building, Factory)
+TEST(Building, Tree)
 {
   Skeleton* skel = new Skeleton();
 
-  BodyNode* body1 = skel->createBodyNode();
-  Joint* joint1 = skel->createJoint("RevoluteJoint");
-  joint1->as<RevoluteJoint>()->setAxis(Eigen::Vector3d::UnitX());
+  skel->beginAssembly();
+
+  BodyNode* body1 = skel->createRootBodyNode("RevoluteJoint");
+  BodyNode* body2 = body1->createChildBodyNode("BallJoint");
+  BodyNode* body3 = skel->createBodyNode(body2, "UniversalJoint");
+
+  Joint* joint1 = body1->getParentJoint();
+  joint1->as<RevoluteJoint>()->setAxis(Vector3d::UnitX());
+  joint1->setPositionFromChildBodyNode(Vector3d(0, 0, 1));
+
+  Joint* joint2 = body2->getParentJoint();
+
+  Joint* joint3 = body3->getParentJoint();
+  joint3->as<UniversalJoint>()->setAxis1(Vector3d::UnitX());
+  joint3->as<UniversalJoint>()->setAxis2(Vector3d::UnitY());
+
+  skel->endAssembly();
 
   EXPECT_TRUE(body1 != nullptr);
+  EXPECT_TRUE(body2 != nullptr);
+  EXPECT_TRUE(body3 != nullptr);
   EXPECT_TRUE(joint1 != nullptr);
+  EXPECT_TRUE(joint2 != nullptr);
+  EXPECT_TRUE(joint3 != nullptr);
 
   delete skel;
+}
+
+//==============================================================================
+TEST(Building, TreeUsingBuilder)
+{
+  Skeleton* skel = new Skeleton();
+  SkeletonBuilder* builder = new SkeletonBuilder(skel);
+
+  BodyNode* body1 = builder->createBodyNode("body1");
+  BodyNode* body2 = builder->createBodyNode("body2");
+
+//  Joint* joint1 = builder->createJoint("RevoluteJoint", "joint1", nullptr, body2);
+//  Joint* joint2 = builder->createJoint("BallJoint", "joint2", body1, body2);
+
+  EXPECT_TRUE(body1 != nullptr);
+  EXPECT_TRUE(body2 != nullptr);
+//  EXPECT_TRUE(joint1 != nullptr);
+//  EXPECT_TRUE(joint2 != nullptr);
+
+  builder->build();
+
+  delete builder;
+  delete skel;
+}
+
+//==============================================================================
+TEST(Building, ClosedLoop)
+{
+
+}
+
+//==============================================================================
+TEST(Building, ClosedLoopUsingBuilder)
+{
+
 }
 
 //==============================================================================

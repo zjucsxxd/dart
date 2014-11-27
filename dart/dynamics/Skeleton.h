@@ -135,25 +135,24 @@ public:
   // Structueral Properties
   //----------------------------------------------------------------------------
 
-  /// \brief Create a BodyNode
-  /// \return BodyNode pointer if the BodyNode was created, or nullptr if not
-  BodyNode* createBodyNode();
-
   /// \brief Create a BodyNode with a given name
   /// \return BodyNode pointer if the BodyNode was created, or nullptr if not
-  BodyNode* createBodyNode(const std::string& _name);
+  BodyNode* createRootBodyNode(const std::string& _jointType);
 
-  /// \brief Destroy a BodyNode with a given BodyNode pointer
-  /// \return True on success, or false otherwise
-  bool destroyBodyNode(BodyNode* _bodyNode);
+  BodyNode* createBodyNode(BodyNode* _parentBodyNode,
+                           const std::string& _jointType);
 
-  /// \brief Destroy a BodyNode with a given name
-  /// \return True on success, or false otherwise
-  bool destroyBodyNode(const std::string& _name);
+//  /// \brief Destroy a BodyNode with a given BodyNode pointer
+//  /// \return True on success, or false otherwise
+//  bool destroyBodyNode(BodyNode* _bodyNode);
 
-  /// \brief Destroy all the BodyNodes
-  /// \return True on success, or false otherwise
-  bool destroyAllBodyNodes();
+//  /// \brief Destroy a BodyNode with a given name
+//  /// \return True on success, or false otherwise
+//  bool destroyBodyNode(const std::string& _name);
+
+//  /// \brief Destroy all the BodyNodes
+//  /// \return True on success, or false otherwise
+//  bool destroyAllBodyNodes();
 
   /// Add a body node
   void addBodyNode(BodyNode* _body);
@@ -181,30 +180,6 @@ public:
 
   /// Get soft body node.
   SoftBodyNode* getSoftBodyNode(const std::string& _name) const;
-
-  /// \brief Create a Joint with type and automatically generated name
-  /// \param[in] _type Type name of the Joint to be created. By default, the
-  /// type names of all the built-in joint classes are the class names itself.
-  /// For example, RevoluteJoint will be created with "RevoluteJoint" type name.
-  Joint* createJoint(const std::string& _type);
-
-  /// \brief Create a Joint with type and name
-  /// \param[in] _type Type name of the Joint to be created. By default, the
-  /// type names of all the built-in joint classes are the class names itself.
-  /// For example, RevoluteJoint will be created with "RevoluteJoint" type name.
-  Joint* createJoint(const std::string& _type, const std::string& _name);
-
-  /// \brief Destroy a Joint with a given Joint pointer
-  /// \return True on success, or false otherwise
-  bool destroyJoint(Joint* _joint);
-
-  /// \brief Destroy a Joint with a given name
-  /// \return True on success, or false otherwise
-  bool destroyJoint(const std::string& _name);
-
-  /// \brief Destroy all the Joints
-  /// \return True on success, or false otherwise
-  bool destroyAllJoints();
 
   /// Get joint whose index is _idx
   Joint* getJoint(size_t _idx) const;
@@ -605,7 +580,26 @@ public:
   /// Compute recursion part B of hybrid dynamics
 //  void computeHybridDynamicsRecursionB();
 
+  /// \brief Begin assembly
+  void beginAssembly()
+  {
+    mIsAssembling = true;
+  }
+
+  /// \brief End assembly
+  void endAssembly()
+  {
+    mIsAssembling = false;
+
+    assemble();
+  }
+
 protected:
+
+
+  /// \brief Assemble this skeleton and mark mIsAssembled to true
+  void assemble();
+
   /// Update mass matrix of the skeleton.
   void updateMassMatrix();
 
@@ -665,6 +659,12 @@ protected:
 
   /// True if self collision check is enabled including adjacent bodies
   bool mEnabledAdjacentBodyCheck;
+
+  /// \brief True if this skeleton is middle of assembling, false otherwise
+  bool mIsAssembling;
+
+  /// \brief False when there was creation or destruction of components
+  bool mIsAssembled;
 
   /// List of body nodes in the skeleton.
   std::vector<BodyNode*> mBodyNodes;

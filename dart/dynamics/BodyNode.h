@@ -182,6 +182,9 @@ public:
   /// Add a child bodynode into the bodynode
   void addChildBodyNode(BodyNode* _body);
 
+  /// \brief
+  BodyNode* createChildBodyNode(const std::string& _jointType);
+
   /// Return _index-th child bodynode of the bodynode
   BodyNode* getChildBodyNode(size_t _index) const;
 

@@ -77,6 +77,30 @@ Skeleton* Joint::getSkeleton() const
   return mSkeleton;
 }
 
+//==============================================================================
+void Joint::setPositionFromParentBodyNode(const Eigen::Vector3d& _p)
+{
+  mT_ParentBodyToJoint.translation() = _p;
+}
+
+//==============================================================================
+void Joint::setPositionFromChildBodyNode(const Eigen::Vector3d& _p)
+{
+  mT_ChildBodyToJoint.translation() = _p;
+}
+
+//==============================================================================
+void Joint::setRotationFromParentBodyNode(const Eigen::Matrix3d& _R)
+{
+  mT_ParentBodyToJoint.linear() = _R;
+}
+
+//==============================================================================
+void Joint::setRotationFromChildBodyNode(const Eigen::Matrix3d& _R)
+{
+  mT_ChildBodyToJoint.linear() = _R;
+}
+
 const Eigen::Isometry3d& Joint::getLocalTransform() const {
   return mT;
 }

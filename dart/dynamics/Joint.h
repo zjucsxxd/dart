@@ -72,6 +72,22 @@ public:
   /// Get skeleton that this joint belongs to. The skeleton set by init().
   Skeleton* getSkeleton() const;
 
+  /// Set position from parent body node to this joint
+  // TODO(JS): position vs translation
+  virtual void setPositionFromParentBodyNode(const Eigen::Vector3d& _p);
+
+  /// Set position from child body node to this joint
+  // TODO(JS): position vs translation
+  virtual void setPositionFromChildBodyNode(const Eigen::Vector3d& _p);
+
+  /// Set orientation from parent body node to this joint
+  // TODO(JS): orientation vs rotation
+  virtual void setRotationFromParentBodyNode(const Eigen::Matrix3d& _R);
+
+  /// Set orientation from child body node to this joint
+  // TODO(JS): orientation vs rotation
+  virtual void setRotationFromChildBodyNode(const Eigen::Matrix3d& _R);
+
   /// Set transformation from parent body node to this joint
   virtual void setTransformFromParentBodyNode(const Eigen::Isometry3d& _T);
 
