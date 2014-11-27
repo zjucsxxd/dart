@@ -11,18 +11,23 @@ class Controller
 {
 public:
 
-  Controller(dart::dynamics::Skeleton* _robot, double _kp=0.5, double _kd=0);
+  Controller(dart::dynamics::Skeleton* _robot);
 
   std::vector<Eigen::VectorXd> mDesiredTrajectory;
 
   const std::vector<Eigen::VectorXd>& getActualTrajectory() const;
 
+  void grab_dynamics();
+  void compute_torques(size_t i1, size_t i0);
   void update();
 
-  double mKp;
-  double mKd;
+  Eigen::MatrixXd mKp;
+  Eigen::MatrixXd mKd;
+  Eigen::VectorXd mTorques;
+  double mPreOffset;
 
   double max_torque;
+  double dt;
 
 protected:
 
@@ -39,8 +44,12 @@ protected:
   std::vector<Eigen::VectorXd> mSampleForces;
   std::vector<Eigen::MatrixXd> mSampleDynamics;
 
+  bool finish_notice;
 
   SystemCalculator calculator;
+
+  bool caught_input_nan;
+  bool caught_output_nan;
 
 };
 

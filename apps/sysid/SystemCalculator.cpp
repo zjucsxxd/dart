@@ -46,12 +46,13 @@ Eigen::Matrix0610d SystemCalculator::computeA(size_t index) const
 
   Eigen::Matrix0610d A;
 
-  const Eigen::Vector6d& a = bn->getBodyAcceleration();
-  const Eigen::Vector3d& d = a.block<3,1>(3,0);
-  const Eigen::Vector3d& w_dot = a.block<3,1>(0,0);
-
   const Eigen::Vector6d& V = bn->getBodyVelocity();
+  const Eigen::Vector3d& v = V.block<3,1>(3,0);
   const Eigen::Vector3d& w = V.block<3,1>(0,0);
+
+  const Eigen::Vector6d& a = bn->getBodyAcceleration();
+  const Eigen::Vector3d& d = a.block<3,1>(3,0) + w.cross(v);
+  const Eigen::Vector3d& w_dot = a.block<3,1>(0,0);
 
   const Eigen::Matrix3d& S_w = skew(w);
   A.block<3,1>(0,0).setZero();
