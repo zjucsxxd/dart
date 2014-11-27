@@ -34,9 +34,13 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <string>
 #include <gtest/gtest.h>
 
+#include "dart/common/Factory.h"
 #include "dart/common/Timer.h"
+
+using std::string;
 
 using namespace dart::common;
 
@@ -72,6 +76,45 @@ TEST(Common, Timer)
   EXPECT_GE(timer1.getTotalElapsedTime(), 2.0);
   EXPECT_GE(timer2.getTotalElapsedTime(), 2.0);
 #endif
+}
+
+//==============================================================================
+class Pizza
+{
+public:
+  Pizza() {}
+  virtual ~Pizza() {}
+};
+class CombinationPizza : public Pizza {};
+class PeperoniPizza    : public Pizza {};
+class CheezePizza      : public Pizza {};
+class ShyPizza         : public Pizza {};
+
+DART_FACTORY_REGISTER(Pizza, CombinationPizza, "CombinationPizza")
+DART_FACTORY_REGISTER(Pizza, PeperoniPizza,    "PeperoniPizza")
+DART_FACTORY_REGISTER(Pizza, CheezePizza,      "CheezePizza")
+DART_FACTORY_REGISTER(Pizza, ShyPizza,         "ShyPizza")
+
+//==============================================================================
+TEST(Factory, Basic)
+{
+  EXPECT_TRUE(Factory<Pizza>::isValidType<CombinationPizza>("CombinationPizza"));
+
+  Pizza* pizza1 = Factory<Pizza>::createObject("CombinationPizza");
+  Pizza* pizza2 = Factory<Pizza>::createObject("PeperoniPizza");
+  Pizza* pizza3 = Factory<Pizza>::createObject("CheezePizza");
+  Pizza* pizza4 = Factory<Pizza>::createObject("ShyPizza");
+
+  EXPECT_TRUE(pizza1 != nullptr);
+  EXPECT_TRUE(pizza2 != nullptr);
+  EXPECT_TRUE(pizza3 != nullptr);
+  EXPECT_TRUE(pizza4 != nullptr);
+
+  // Downcast test
+  EXPECT_EQ(pizza1, dynamic_cast<CombinationPizza*>(pizza1));
+  EXPECT_EQ(pizza2, dynamic_cast<PeperoniPizza*>(pizza2));
+  EXPECT_EQ(pizza3, dynamic_cast<CheezePizza*>(pizza3));
+  EXPECT_EQ(pizza4, dynamic_cast<ShyPizza*>(pizza4));
 }
 
 //==============================================================================
