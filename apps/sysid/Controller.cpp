@@ -26,10 +26,13 @@ Controller::Controller(dart::dynamics::Skeleton* _robot) :
 
   mTorques = Eigen::VectorXd::Zero(nDof);
 
-  for(size_t i=0; i<6; ++i)
+  if(floater)
   {
-    mKp(i, i) = 0;
-    mKd(i, i) = 0;
+    for(size_t i=0; i<6; ++i)
+    {
+      mKp(i, i) = 0;
+      mKd(i, i) = 0;
+    }
   }
 
   const double scale = 10;
@@ -58,38 +61,12 @@ Controller::Controller(dart::dynamics::Skeleton* _robot) :
 //  }
 
   mPreOffset = 0.0;
+  floater = true;
 }
 
 const std::vector<Eigen::VectorXd>& Controller::getActualTrajectory() const
 {
   return mActualTrajectory;
-}
-
-static bool getAxis(const dart::dynamics::Joint* joint, Eigen::Vector6d& axis)
-{
-  using namespace dart::dynamics;
-
-  const FreeJoint* fj = dynamic_cast<const FreeJoint*>(joint);
-  if(fj)
-    return false;
-
-  const RevoluteJoint* rj = dynamic_cast<const RevoluteJoint*>(joint);
-  if(rj)
-  {
-    axis.block<3,1>(0,0) = rj->getAxis();
-    axis.block<3,1>(3,0).setZero();
-    return true;
-  }
-
-  const PrismaticJoint* pj = dynamic_cast<const PrismaticJoint*>(joint);
-  if(pj)
-  {
-    axis.block<3,1>(0,0).setZero();
-    axis.block<3,1>(3,0) = pj->getAxis();
-    return true;
-  }
-
-  return false;
 }
 
 static bool descendsFrom(const dart::dynamics::Skeleton* skel,
@@ -115,10 +92,11 @@ void Controller::grab_dynamics()
   using namespace dart::dynamics;
 
   size_t n = mRobot->getNumBodyNodes();
-  Eigen::MatrixXd sampleDynamics(n+5,10*n);
+  size_t dof = mRobot->getNumDofs();
+  Eigen::MatrixXd sampleDynamics(dof,10*n);
   sampleDynamics.setZero();
-  Eigen::VectorXd sampleForces(n+5);
-  sampleForces.setZero();
+//  Eigen::VectorXd sampleForces(dof);
+//  sampleForces.setZero();
 
   mSampleA.clear();
   for(size_t i=0; i<n; ++i)
@@ -130,23 +108,13 @@ void Controller::grab_dynamics()
                 << "\n---------------" << std::endl;
   }
 
+  size_t location = 0;
   for(size_t i=0; i<n; ++i)
   {
-    Eigen::Vector6d axis;
-    bool useAxis = getAxis(mRobot->getJoint(i), axis);
-    const ZeroDofJoint* zj = dynamic_cast<const ZeroDofJoint*>(mRobot->getJoint(i));
-    if(zj)
-      continue;
+    Joint* joint = mRobot->getJoint(i);
 
-    if(useAxis)
-    {
-      sampleForces[5+i] = mRobot->getJoint(i)->getForce(0);
-//        sampleForces[5+i] = mRobot->getJoint(i)->getForces();
-    }
-    else
-    {
-      sampleForces.block<6,1>(0,0) = mRobot->getJoint(i)->getForces();
-    }
+    Eigen::MatrixXd localJ = joint->getLocalJacobian();
+    size_t s = localJ.cols();
 
     for(size_t j=i; j<n; ++j)
     {
@@ -154,19 +122,16 @@ void Controller::grab_dynamics()
         continue;
 
       const Eigen::Matrix6d X = calculator.computeSpatialTransform(j, i);
-      if(useAxis)
-      {
-        sampleDynamics.block<1,10>(i+5,10*j) = axis.transpose()*X*mSampleA[j];
-      }
-      else
-      {
-        sampleDynamics.block<6,10>(0,10*j) = X*mSampleA[j];
-      }
+      sampleDynamics.block(location, 10*j, s, 10) = localJ.transpose()*X*mSampleA[j];
     }
+//    sampleForces.block(location, 0, s, 1) = joint->getForces();
+
+    location += s;
   }
 
   mSampleDynamics.push_back(sampleDynamics);
-  mSampleForces.push_back(sampleForces);
+//  mSampleForces.push_back(sampleForces);
+  mSampleForces.push_back(mTorques);
 }
 
 void Controller::compute_torques(size_t i1, size_t i0)
@@ -217,15 +182,20 @@ void Controller::compute_torques(size_t i1, size_t i0)
 //    mPreOffset = offset;
 //  }
 
-  for(size_t i=0; i<6; ++i)
-    mTorques[i] = 0.0;
+  if(floater)
+  {
+    for(size_t i=0; i<6; ++i)
+      mTorques[i] = 0.0;
+  }
 }
 
 void Controller::update()
 {
   using namespace dart::dynamics;
 
-  if(0 < step && step <= mDesiredTrajectory.size())
+//  if(0 < step && step <= mDesiredTrajectory.size())
+//    grab_dynamics();
+  if(step%50 == 0)
     grab_dynamics();
 
   if(mDesiredTrajectory.size() == 0)
@@ -251,5 +221,5 @@ void Controller::update()
 
 void Controller::startPostProcessing()
 {
-  calculator.postProcessing(mSampleForces, mSampleDynamics);
+  calculator.postProcessing(mRobot, mSampleForces, mSampleDynamics);
 }

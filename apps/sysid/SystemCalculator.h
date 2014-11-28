@@ -22,8 +22,7 @@ public:
   Eigen::Matrix0610d computeA(size_t index) const;
   Eigen::Matrix6d computeSpatialTransform(size_t from, size_t to) const;
 
-
-  void postProcessing(const std::vector<Eigen::VectorXd>& forces,
+  Eigen::VectorXd postProcessing(dart::dynamics::Skeleton* robot, const std::vector<Eigen::VectorXd>& forces,
                       const std::vector<Eigen::MatrixXd>& dynamics);
 
 protected:

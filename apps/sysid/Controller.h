@@ -33,6 +33,8 @@ public:
 
   void startPostProcessing();
 
+  bool floater;
+
 protected:
 
   size_t step;

@@ -12,17 +12,13 @@
 #include "dart/dynamics/BodyNode.h"
 #include "dart/dynamics/BoxShape.h"
 #include "dart/dynamics/BallJoint.h"
+#include "dart/dynamics/RevoluteJoint.h"
 
 #include "TrajectoryGenerator.h"
 
 #include "dart/gui/SimWindow.h"
 
 #include "MyWindow.h"
-
-std::vector<dart::dynamics::BodyNode*> left_bn;
-size_t left_dofs;
-std::vector<dart::dynamics::BodyNode*> right_bn;
-size_t right_dofs;
 
 dart::dynamics::Skeleton* create_ground()
 {
@@ -46,157 +42,12 @@ dart::dynamics::Skeleton* create_ground()
   return ground;
 }
 
-//void stepTowards(const Eigen::Isometry3d& target,
-//                 const std::vector<dart::dynamics::BodyNode*> bn_list,
-//                 size_t numDofs)
-//{
-//  using namespace dart::dynamics;
-//  dart::math::Jacobian J(6, numDofs);
-//  size_t count = 0;
-
-//  BodyNode* last = bn_list.back();
-
-//  const Eigen::Vector3d& offset = last->getTransform().inverse()*target.translation();
-//  J.block(0, 0, 3, numDofs) = last->getBodyLinearJacobian(offset).block(0, 6, 3, numDofs);
-//  J.block(3, 0, 3, numDofs) = last->getBodyAngularJacobian().block(0, 6, 3, numDofs);
-
-//  Eigen::Vector6d error;
-//  error.block<3,1>(0,0) = target.translation() - last->getTransform().translation();
-//  const Eigen::Matrix3d& rot = target.rotation()*last->getTransform().rotation().transpose();
-//  error[3] =  atan2(rot(2,1), rot(2,2));
-//  error[4] = -asin(rot(2,0));
-//  error[5] =  atan2(rot(1,0), rot(0,0));
-
-//  double damp = 0.05;
-//  Eigen::VectorXd dq = J.transpose()*(J*J.transpose()+
-//              damp*damp*Eigen::MatrixXd::Identity(J.rows(),J.rows())).inverse()*error;
-
-//  count = 0;
-//  for(size_t i=0; i<bn_list.size(); ++i)
-//  {
-//    BodyNode* bn = bn_list[i];
-//    Joint* joint = bn->getParentJoint();
-//    for(size_t j=0; j<joint->getNumDofs(); ++j)
-//    {
-//      joint->setPosition(j, joint->getPosition(j)+dq[count]);
-//      ++count;
-//    }
-//  }
-//}
-
-//void balance(dart::dynamics::Skeleton* robot, const Eigen::Isometry3d& com_target)
-//{
-//  using namespace dart::dynamics;
-
-//  const Eigen::Vector3d com = robot->getWorldCOM();
-//  Eigen::Vector6d err;
-//  err.block<3,1>(0,0) = com_target.translation()-com;
-//  err[1] = 0;
-//  err[2] = 0;
-
-//  const Eigen::Matrix3d& rot = com_target.rotation()*
-//      robot->getBodyNode(0)->getTransform().rotation().transpose();
-//  err[3] =  atan2(rot(2,1), rot(2,2));
-//  err[4] = -asin(rot(2,0));
-//  err[5] =  atan2(rot(1,0), rot(0,0));
-
-//  Eigen::Matrix3d comJ = robot->getWorldCOMJacobian().block<3,3>(0,0);
-
-////  std::cout << "comJ: \n" << comJ << std::endl;
-
-////  Eigen::Vector3d dq = comJ.inverse()*err;
-//  Eigen::Vector3d dq = comJ.transpose()*err.block<3,1>(0,0);
-
-////  std::cout << "err: " << err.transpose() << std::endl;
-////  std::cout << "q: "
-////            << robot->getPosition(0) << "\t"
-////            << robot->getPosition(1) << "\t"
-////            << robot->getPosition(2) << std::endl;
-
-//  robot->setPosition(0, robot->getPosition(0)+dq[0]);
-//  robot->setPosition(2, robot->getPosition(2)+dq[2]);
-
-//  Eigen::Matrix3d bodyJ = robot->getBodyNode(0)->getBodyAngularJacobian().block<3,3>(0,0);
-////  std::cout << "J:\n" << bodyJ << std::endl;
-//  dq = bodyJ.inverse()*err.block<3,1>(0,0);
-
-//  robot->setPosition(3, robot->getPosition(3)+dq[0]);
-//  robot->setPosition(4, robot->getPosition(4)+dq[1]);
-//  robot->setPosition(5, robot->getPosition(5)+dq[2]);
-
-////  std::cout << "dq: " << dq.transpose() << std::endl;
-////  std::cout << "q: "
-////            << robot->getPosition(0) << "\t"
-////            << robot->getPosition(1) << "\t"
-////            << robot->getPosition(2) << std::endl;
-//}
-
-
-//void placeFeet(dart::dynamics::Skeleton* robot,
-//               const Eigen::Isometry3d& left,
-//               const Eigen::Isometry3d& right,
-//               const Eigen::Isometry3d& com)
-//{
-//  for(size_t i=0; i<20; ++i)
-//  {
-//    robot->computeForwardKinematics(true, false, false);
-//    balance(robot, com);
-//    robot->computeForwardKinematics(true, false, false);
-//    stepTowards(left, left_bn, left_dofs);
-//    stepTowards(right, right_bn, right_dofs);
-//  }
-//}
-
-
-
-//std::vector<Eigen::VectorXd> createTrajectory(dart::dynamics::Skeleton* robot)
-//{
-//  std::vector<Eigen::VectorXd> trajectory;
-//  Eigen::VectorXd config = robot->getPositions();
-
-//  size_t lsp = robot->getJoint("j_bicep_left")->getIndexInSkeleton(1);
-//  size_t rsp = robot->getJoint("j_bicep_right")->getIndexInSkeleton(1);
-
-//  const Eigen::Isometry3d base_left = left_bn.back()->getTransform();
-//  const Eigen::Isometry3d base_right = right_bn.back()->getTransform();
-//  const Eigen::Vector3d base_pelvis = robot->getBodyNode(0)->getTransform().translation();
-//  const Eigen::Vector3d base_com_x = robot->getWorldCOM();
-//  Eigen::Isometry3d base_com(Eigen::Isometry3d::Identity());
-//  base_com.translate(base_com_x);
-//  base_com.rotate(robot->getBodyNode(0)->getTransform().rotation());
-
-//  std::cout << base_left.matrix() << std::endl;
-
-//  double T = 10;
-//  for(size_t i=0; i<(size_t)T/robot->getTimeStep(); ++i)
-//  {
-//    double t = i*robot->getTimeStep();
-
-//    Eigen::Vector3d pelvis_shift = Eigen::Vector3d(0, -0.4, 0.05)*(1-cos(t*2*M_PI/T))/2;
-//    config.block<3,1>(0,0) = base_pelvis + pelvis_shift;
-//    Eigen::Isometry3d left_target(base_left); Eigen::Isometry3d right_target(base_right);
-//    left_target.pretranslate(-pelvis_shift); right_target.pretranslate(-pelvis_shift);
-//    placeFeet(robot, left_target, right_target, base_com);
-
-//    config = robot->getPositions();
-
-//    config[lsp] =  M_PI/4*sin(t*2*M_PI/T);
-//    config[rsp] =  M_PI/4*sin(t*2*M_PI/T);
-
-//    trajectory.push_back(config);
-//  }
-
-//  return trajectory;
-//}
-
-
-
-int main(int argc, char* argv[])
+MyWindow* create_hubo_world()
 {
   using namespace dart::dynamics;
+
 //  dart::simulation::World* world = new dart::simulation::World;
 
-//
 //  dart::dynamics::Skeleton* ground = create_ground();
 //  world->addSkeleton(ground);
 
@@ -217,6 +68,29 @@ int main(int argc, char* argv[])
 ////  world->setGravity(Eigen::Vector3d(0, 0, 0));
 //  world->setTimeStep(0.001);
 
+//  const Eigen::VectorXd& config = robot->getPositions();
+
+//  Controller* controller = new Controller(robot);
+//  controller->dt = world->getTimeStep();
+//  std::cout << "Creating trajectory" << std::endl;
+//  TrajectoryGenerator generator(robot, left_bn, right_bn);
+//  controller->mDesiredTrajectory = generator.createTrajectory();
+//  std::cout << "Trajectory created" << std::endl;
+
+//  robot->setPositions(config);
+//  robot->computeForwardKinematics(true, true, true);
+
+//  MyWindow* window = new MyWindow(controller);
+//  window->setWorld(world);
+
+//  return window;
+
+  return NULL;
+}
+
+MyWindow* create_simple_humanoid()
+{
+  using namespace dart::dynamics;
 
   dart::simulation::World* world
       = dart::utils::SkelParser::readWorld(
@@ -260,6 +134,7 @@ int main(int argc, char* argv[])
   robot->computeForwardKinematics(true, true, false);
 
   std::cout << "BodyNode count: " << robot->getNumBodyNodes() << std::endl;
+  std::cout << "Dof count: " << robot->getNumDofs() << std::endl;
   for(size_t j=0; j<robot->getNumBodyNodes(); ++j)
   {
     std::cout << robot->getBodyNode(j)->getName() << ": ";
@@ -268,28 +143,21 @@ int main(int argc, char* argv[])
     std::cout << "(" << robot->getJoint(j)->getNumDofs() << ")" << std::endl;
   }
 
+  std::vector<dart::dynamics::BodyNode*> left_bn;
   left_bn.push_back(robot->getBodyNode("h_thigh_left"));
   left_bn.push_back(robot->getBodyNode("h_shin_left"));
   left_bn.push_back(robot->getBodyNode("h_heel_left"));
-//  left_bn.push_back(robot->getBodyNode("h_toe_left"));
-  left_dofs = 0;
-  for(size_t i=0; i < left_bn.size(); ++i)
-    left_dofs += left_bn[i]->getParentJoint()->getNumDofs();
 
+  std::vector<dart::dynamics::BodyNode*> right_bn;
   right_bn.push_back(robot->getBodyNode("h_thigh_right"));
   right_bn.push_back(robot->getBodyNode("h_shin_right"));
   right_bn.push_back(robot->getBodyNode("h_heel_right"));
-//  right_bn.push_back(robot->getBodyNode("h_toe_right"));
-  right_dofs = 0;
-  for(size_t i=0; i < right_bn.size(); ++i)
-    right_dofs += right_bn[i]->getParentJoint()->getNumDofs();
 
   const Eigen::VectorXd& config = robot->getPositions();
 
   Controller* controller = new Controller(robot);
   controller->dt = world->getTimeStep();
   std::cout << "Creating trajectory" << std::endl;
-//  controller->mDesiredTrajectory = createTrajectory(robot);
   TrajectoryGenerator generator(robot, left_bn, right_bn);
   controller->mDesiredTrajectory = generator.createTrajectory();
   std::cout << "Trajectory created" << std::endl;
@@ -297,12 +165,121 @@ int main(int argc, char* argv[])
   robot->setPositions(config);
   robot->computeForwardKinematics(true, true, true);
 
-  MyWindow window(controller);
-  window.setWorld(world);
+  MyWindow* window = new MyWindow(controller);
+  window->setWorld(world);
+
+  return window;
+}
+
+dart::dynamics::BodyNode* addSimpleLink(dart::dynamics::Skeleton* arm,
+                                        dart::dynamics::BodyNode* parent)
+{
+  using namespace dart::dynamics;
+  using namespace Eigen;
+
+  double xx=1, yy=1, zz=1, xy=0, xz=0, yz=0;
+  double mass = 1;
+  double h = -1;
+
+  Eigen::Isometry3d offset(Eigen::Isometry3d::Identity());
+  offset.translate(Vector3d(0,0,h));
+
+  BodyNode* bn = new BodyNode("link");
+  RevoluteJoint* joint = new RevoluteJoint(Vector3d(0,1,0), "joint");
+  joint->setTransformFromParentBodyNode(offset);
+  Shape* vis_shape = new BoxShape(Vector3d(0.3,0.3,fabs(h)));
+  vis_shape->setOffset(Vector3d(0,0,h/2));
+  bn->addVisualizationShape(vis_shape);
+  Shape* col_shape = new BoxShape(Vector3d(0.3,0.3,fabs(h)));
+  col_shape->setOffset(Vector3d(0,0,h/2));
+  bn->addCollisionShape(col_shape);
+  bn->setMass(mass);
+  bn->setLocalCOM(Vector3d(0,0,h));
+  bn->setMomentOfInertia(xx, yy, zz, xy, xz, yz);
+  bn->setParentJoint(joint);
+  arm->addBodyNode(bn);
+
+  if(parent)
+    parent->addChildBodyNode(bn);
+
+  return bn;
+}
+
+std::vector<Eigen::VectorXd> generateSimpleTrajectory(dart::dynamics::Skeleton* arm)
+{
+  std::vector<Eigen::VectorXd> trajectory;
+  Eigen::VectorXd config(arm->getNumDofs());
+  config.setZero();
+
+  double amplitude = 120.0*M_PI/180.0;
+  double period = 2;
+  for(size_t i=0; i<arm->getNumDofs(); ++i)
+  {
+    for(size_t k=0; k<(size_t)period/arm->getTimeStep(); ++k)
+    {
+      double t = k*arm->getTimeStep();
+
+      config[i] = amplitude*sin(t*2*M_PI/period);
+
+      trajectory.push_back(config);
+    }
+
+    config.setZero();
+  }
+
+  return trajectory;
+}
+
+MyWindow* create_simple_arm()
+{
+  using namespace dart::dynamics;
+  using namespace Eigen;
+
+  dart::simulation::World* world = new dart::simulation::World;
+  world->setGravity(Vector3d(0,0,-9.81));
+//  world->setGravity(Vector3d(0,0,0));
+  world->setTimeStep(0.001);
+
+  Skeleton* arm = new Skeleton("arm");
+
+  BodyNode* parent = NULL;
+  for(size_t i=0; i<3; ++i)
+  {
+    parent = addSimpleLink(arm, parent);
+  }
+
+  for(size_t i=0; i<arm->getNumBodyNodes(); ++i)
+  {
+    std::cout << arm->getJoint(i)->getName() << " -> "
+              << arm->getBodyNode(i)->getName() << std::endl;
+  }
+
+  world->addSkeleton(arm);
+
+  const Eigen::VectorXd& config = arm->getPositions();
+
+  Controller* controller = new Controller(arm);
+  controller->floater = false;
+  controller->dt = world->getTimeStep();
+  std::cout << "Creating trajectory" << std::endl;
+  controller->mDesiredTrajectory = generateSimpleTrajectory(arm);
+  std::cout << "Trajectory created" << std::endl;
+
+  arm->setPositions(config);
+  arm->computeForwardKinematics(true, true, true);
+
+  MyWindow* window = new MyWindow(controller);
+  window->setWorld(world);
+
+  return window;
+}
+
+int main(int argc, char* argv[])
+{
+  MyWindow* window = create_simple_humanoid();
+//  MyWindow* window = create_simple_arm();
 
   glutInit(&argc, argv);
-  window.initWindow(640, 480, "Forward Simulation");
+  window->initWindow(640, 480, "Forward Simulation");
   glutMainLoop();
-
-  delete world;
 }
