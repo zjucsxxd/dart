@@ -32,11 +32,30 @@ Controller::Controller(dart::dynamics::Skeleton* _robot) :
     mKd(i, i) = 0;
   }
 
+  const double scale = 10;
+//  const double scale = 1;
   for(size_t i=6; i<nDof; ++i)
   {
-    mKp(i,i) = 400.0;
-    mKd(i,i) = 40;
+    mKp(i,i) = 400.0*scale;
+    mKd(i,i) = 40*scale;
   }
+
+//  const double ankles = 10;
+//  std::vector<dart::dynamics::Joint*> feet;
+//  feet.push_back(_robot->getJoint("j_heel_left"));
+//  feet.push_back(_robot->getJoint("j_heel_right"));
+////  feet.push_back(_robot->getJoint("j_toe_left"));
+////  feet.push_back(_robot->getJoint("j_toe_right"));
+
+//  for(size_t f=0; f<feet.size(); ++f)
+//  {
+//    dart::dynamics::Joint* joint = feet[f];
+//    for(size_t i=0; i<joint->getNumDofs(); ++i)
+//    {
+//      size_t index = joint->getIndexInSkeleton(i);
+//      mKp(index,index) *= ankles;
+//    }
+//  }
 
   mPreOffset = 0.0;
 }
@@ -154,41 +173,49 @@ void Controller::compute_torques(size_t i1, size_t i0)
 {
   Eigen::VectorXd pos = mRobot->getPositions();
   Eigen::VectorXd vel = mRobot->getVelocities();
+  Eigen::VectorXd acc = mRobot->getAccelerations();
+
+  const Eigen::VectorXd& rPos0 = mDesiredTrajectory[i0];
+  const Eigen::VectorXd& rPos1 = mDesiredTrajectory[i1];
+
+  Eigen::VectorXd rVel1 = (rPos1-rPos0)/dt;
 
   Eigen::VectorXd constrForces = mRobot->getConstraintForces();
 
   Eigen::MatrixXd invM = (mRobot->getMassMatrix() + mKd*dt).inverse();
-  Eigen::VectorXd p = -mKp * (pos + vel*dt - mDesiredTrajectory[i1]);
-  Eigen::VectorXd d = -mKd*vel;
+  Eigen::VectorXd p = -mKp * (pos + vel*dt - rPos1);
+//  Eigen::VectorXd d = -mKd * (vel + acc*dt - rVel1);
+  Eigen::VectorXd d = -mKd * (vel - rVel1);
+//  Eigen::VectorXd d = -mKd * (vel);
   Eigen::VectorXd qddot = invM*(-mRobot->getCoriolisAndGravityForces()
                                        + p + d + constrForces);
 
   mTorques = p + d - mKd * qddot * dt;
 
-  Eigen::Vector3d com = mRobot->getWorldCOM();
-  Eigen::Vector3d cop = mRobot->getBodyNode("h_heel_left")->getTransform()
-      * Eigen::Vector3d(0.05, 0, 0);
+//  Eigen::Vector3d com = mRobot->getWorldCOM();
+//  Eigen::Vector3d cop = mRobot->getBodyNode("h_heel_left")->getTransform()
+//      * Eigen::Vector3d(0.05, 0, 0);
 
-  double offset = com[0] - cop[0];
-  if (offset < 0.1 && offset > 0.0) {
-    double k1 = 200.0;
-    double k2 = 100.0;
-    double kd = 10.0;
-    mTorques[17] += -k1 * offset + kd * (mPreOffset - offset);
-    mTorques[25] += -k2 * offset + kd * (mPreOffset - offset);
-    mTorques[19] += -k1 * offset + kd * (mPreOffset - offset);
-    mTorques[26] += -k2 * offset + kd * (mPreOffset - offset);
-    mPreOffset = offset;
-  } else if (offset > -0.2 && offset < -0.05) {
-    double k1 = 2000.0;
-    double k2 = 100.0;
-    double kd = 100.0;
-    mTorques[17] += -k1 * offset + kd * (mPreOffset - offset);
-    mTorques[25] += -k2 * offset + kd * (mPreOffset - offset);
-    mTorques[19] += -k1 * offset + kd * (mPreOffset - offset);
-    mTorques[26] += -k2 * offset + kd * (mPreOffset - offset);
-    mPreOffset = offset;
-  }
+//  double offset = com[0] - cop[0];
+//  if (offset < 0.1 && offset > 0.0) {
+//    double k1 = 200.0;
+//    double k2 = 100.0;
+//    double kd = 10.0;
+//    mTorques[17] += -k1 * offset + kd * (mPreOffset - offset);
+//    mTorques[25] += -k2 * offset + kd * (mPreOffset - offset);
+//    mTorques[19] += -k1 * offset + kd * (mPreOffset - offset);
+//    mTorques[26] += -k2 * offset + kd * (mPreOffset - offset);
+//    mPreOffset = offset;
+//  } else if (offset > -0.2 && offset < -0.05) {
+//    double k1 = 2000.0;
+//    double k2 = 100.0;
+//    double kd = 100.0;
+//    mTorques[17] += -k1 * offset + kd * (mPreOffset - offset);
+//    mTorques[25] += -k2 * offset + kd * (mPreOffset - offset);
+//    mTorques[19] += -k1 * offset + kd * (mPreOffset - offset);
+//    mTorques[26] += -k2 * offset + kd * (mPreOffset - offset);
+//    mPreOffset = offset;
+//  }
 
   for(size_t i=0; i<6; ++i)
     mTorques[i] = 0.0;
@@ -198,7 +225,7 @@ void Controller::update()
 {
   using namespace dart::dynamics;
 
-  if(0 > step && step <= mDesiredTrajectory.size())
+  if(0 < step && step <= mDesiredTrajectory.size())
     grab_dynamics();
 
   if(mDesiredTrajectory.size() == 0)
@@ -219,4 +246,10 @@ void Controller::update()
   mRobot->setForces(mTorques);
 
   ++step;
+}
+
+
+void Controller::startPostProcessing()
+{
+  calculator.postProcessing(mSampleForces, mSampleDynamics);
 }

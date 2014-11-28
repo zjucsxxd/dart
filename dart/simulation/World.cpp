@@ -252,7 +252,7 @@ std::string World::addSkeleton(dynamics::Skeleton* _skeleton)
 }
 
 //==============================================================================
-void World::removeSkeleton(dynamics::Skeleton* _skeleton)
+void World::removeSkeleton(dynamics::Skeleton* _skeleton, bool delete_skeleton)
 {
   assert(_skeleton != NULL && "Invalid skeleton.");
 
@@ -289,7 +289,8 @@ void World::removeSkeleton(dynamics::Skeleton* _skeleton)
   // Update recording
   mRecording->updateNumGenCoords(mSkeletons);
 
-  delete _skeleton;
+  if(delete_skeleton)
+    delete _skeleton;
 }
 
 //==============================================================================

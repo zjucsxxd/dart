@@ -23,6 +23,9 @@ public:
   Eigen::Matrix6d computeSpatialTransform(size_t from, size_t to) const;
 
 
+  void postProcessing(const std::vector<Eigen::VectorXd>& forces,
+                      const std::vector<Eigen::MatrixXd>& dynamics);
+
 protected:
   const dart::dynamics::Skeleton* mRobot;
 

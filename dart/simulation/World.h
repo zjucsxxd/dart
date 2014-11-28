@@ -118,7 +118,7 @@ public:
   std::string addSkeleton(dynamics::Skeleton* _skeleton);
 
   /// Remove a skeleton in this world
-  void removeSkeleton(dynamics::Skeleton* _skeleton);
+  void removeSkeleton(dynamics::Skeleton* _skeleton, bool delete_skeleton=true);
 
   /// Remove all the skeletons in this world
   void removeAllSkeletons();

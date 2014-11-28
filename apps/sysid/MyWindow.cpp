@@ -4,6 +4,7 @@
 
 
 MyWindow::MyWindow(Controller *_controller) :
+  everythingFinished(false),
   mController(_controller)
 {
 
@@ -16,11 +17,18 @@ MyWindow::~MyWindow()
 
 void MyWindow::timeStepping()
 {
-//  std::cout << "Time stepping" << std::endl;
   if(mController)
     mController->update();
 
-//  std::cout << "World stepping" << std::endl;
-  mWorld->step();
-//  std::cout << "World stepped" << std::endl;
+  if(!mController->finished())
+    mWorld->step();
+  else
+  {
+    if(everythingFinished)
+      return;
+
+    std::cout << "Starting post processing" << std::endl;
+    mController->startPostProcessing();
+    everythingFinished = true;
+  }
 }

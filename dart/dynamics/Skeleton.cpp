@@ -379,7 +379,9 @@ void Skeleton::init(double _timeStep, const Eigen::Vector3d& _gravity)
   for (size_t i = 0; i < mBodyNodes.size(); ++i)
   {
     if (mBodyNodes[i]->getParentBodyNode() == NULL)
+    {
       rootBodyNodes.push_back(mBodyNodes[i]);
+    }
   }
 
   // Rearrange the list of body nodes with BFS (Breadth First Search)

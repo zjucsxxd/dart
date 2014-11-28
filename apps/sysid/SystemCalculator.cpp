@@ -2,6 +2,7 @@
 #include "dart/dynamics/Skeleton.h"
 #include "dart/dynamics/BodyNode.h"
 
+#include <Eigen/SVD>
 
 SystemCalculator::SystemCalculator(const dart::dynamics::Skeleton* robot) :
   mRobot(robot)
@@ -89,4 +90,36 @@ Eigen::Matrix6d SystemCalculator::computeSpatialTransform(size_t from, size_t to
   X.block<3,3>(3,3) = tf.linear();
 
   return X;
+}
+
+
+void SystemCalculator::postProcessing(const std::vector<Eigen::VectorXd>& forces,
+                                      const std::vector<Eigen::MatrixXd>& dynamics)
+{
+  std::cout << "Creating data structures: " << forces.size() << ", " << dynamics.size() << std::endl;
+  size_t n = dynamics[0].rows();
+  size_t P = dynamics.size();
+  size_t C = dynamics[0].cols();
+  Eigen::MatrixXd A(n*P,C);
+  Eigen::VectorXd f(n*P);
+
+  std::cout << "Filling data structures" << std::endl;
+  for(size_t i=0; i<P; ++i)
+  {
+    A.block(i*n,0,n,C) = dynamics[i];
+    f.block(i*n,0,n,1) = forces[i];
+  }
+  std::cout << "Data filled" << std::endl;
+
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(A);
+  std::cout << "SVD constructed" << std::endl;
+
+  size_t count = 0;
+  for(int i=0; i<svd.singularValues().size(); ++i)
+  {
+    if(svd.singularValues()[i] > 1e-8)
+      ++count;
+  }
+
+  std::cout << "We have " << count << " non-zero parameters out of a possible " << C << std::endl;
 }

@@ -29,6 +29,10 @@ public:
   double max_torque;
   double dt;
 
+  inline bool finished() const { return finish_notice; }
+
+  void startPostProcessing();
+
 protected:
 
   size_t step;
