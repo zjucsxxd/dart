@@ -42,7 +42,6 @@
 #include "dart/dynamics/BodyNode.h"
 #include "dart/dynamics/RevoluteJoint.h"
 #include "dart/dynamics/Skeleton.h"
-#include "dart/dynamics/SkeletonBuilder.h"
 #include "dart/simulation/World.h"
 
 using namespace Eigen;
@@ -165,41 +164,6 @@ TEST(Building, Tree)
   EXPECT_TRUE(joint3 != nullptr);
 
   delete skel;
-}
-
-//==============================================================================
-TEST(Building, TreeUsingBuilder)
-{
-  Skeleton* skel = new Skeleton();
-  SkeletonBuilder* builder = new SkeletonBuilder(skel);
-
-  BodyNode* body1 = builder->createBodyNode();
-  BodyNode* body2 = builder->createBodyNode();
-
-  Joint* joint1 = builder->createJoint("RevoluteJoint", nullptr, body2);
-  Joint* joint2 = builder->createJoint("BallJoint", body1, body2);
-
-  EXPECT_TRUE(body1 != nullptr);
-  EXPECT_TRUE(body2 != nullptr);
-  EXPECT_TRUE(joint1 != nullptr);
-  EXPECT_TRUE(joint2 != nullptr);
-
-  builder->build();
-
-  delete builder;
-  delete skel;
-}
-
-//==============================================================================
-TEST(Building, ClosedLoop)
-{
-
-}
-
-//==============================================================================
-TEST(Building, ClosedLoopUsingBuilder)
-{
-
 }
 
 //==============================================================================
