@@ -51,7 +51,6 @@ class BallJoint : public MultiDofJoint<3>
 public:
   /// \brief Constructor
   /// \warning This function will turn to protected member since DART 5.0.
-  /// Please use Skeleton::createJoint() to create joint.
   explicit BallJoint(const std::string& _name = "BallJoint");
 
   /// brief Destructor

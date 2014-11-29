@@ -177,43 +177,36 @@ double Skeleton::getMass() const
 //==============================================================================
 BodyNode* Skeleton::createRootBodyNode(const std::string& _jointType)
 {
+  // Check if this is the first BodyNode
   if (!mBodyNodes.empty())
   {
     dterr << "Root body node already exists." << std::endl;
     return nullptr;
   }
 
-  BodyNode* newBodyNode = new BodyNode();
-  Joint*    newJoint    = common::Factory<Joint>::createObject(_jointType);
-
-  // TODO(JS): when newJoint is nullptr
-
-  newBodyNode->setParentJoint(newJoint);
-
-  mBodyNodes.push_back(newBodyNode);
-
-  if (!mIsAssembling)
-    assemble();
-
-  return newBodyNode;
+  return createBodyNode(nullptr, _jointType);
 }
 
 //==============================================================================
 BodyNode* Skeleton::createBodyNode(BodyNode* _parentBodyNode,
                                    const std::string& _jointType)
 {
-  if (_parentBodyNode == nullptr)
-    return createRootBodyNode(_jointType);
+  // Create joint
+  Joint* newJoint = common::Factory<Joint>::createObject(_jointType);
+  if (newJoint == nullptr)
+  {
+    dterr << "Joint type [" << _jointType << "] is not valid type."
+          << std::endl;
+    return nullptr;
+  }
 
+  // Create body node
   BodyNode* newBodyNode = new BodyNode();
-  Joint*    newJoint    = common::Factory<Joint>::createObject(_jointType);
-
-  // TODO(JS): when newJoint is nullptr
-
+  newBodyNode->mSkeleton = this;
   newBodyNode->setParentJoint(newJoint);
-  _parentBodyNode->addChildBodyNode(newBodyNode);
-
   mBodyNodes.push_back(newBodyNode);
+  if (_parentBodyNode)
+    _parentBodyNode->addChildBodyNode(newBodyNode);
 
   if (!mIsAssembling)
     assemble();
@@ -1776,6 +1769,9 @@ void Skeleton::assemble()
 {
   if (mIsAssembled)
     return;
+
+  // TODO(JS): temporary code
+  init(mTimeStep, mGravity);
 
   mIsAssembled = true;
 }

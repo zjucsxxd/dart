@@ -53,7 +53,6 @@ class WeldJoint : public ZeroDofJoint
 public:
   /// \brief Constructor
   /// \warning This function will turn to protected member since DART 5.0.
-  /// Please use Skeleton::createJoint() to create joint.
   explicit WeldJoint(const std::string& _name = "WeldJoint");
 
   /// brief Destructor

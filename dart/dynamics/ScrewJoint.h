@@ -53,7 +53,6 @@ class ScrewJoint : public SingleDofJoint
 public:
   /// \brief Constructor
   /// \warning This function will turn to protected member since DART 5.0.
-  /// Please use Skeleton::createJoint() to create joint.
   ScrewJoint(const Eigen::Vector3d& axis = Eigen::Vector3d(1.0, 0.0, 0.0),
              double _pitch = 0.1,
              const std::string& _name = "ScrewJoint");

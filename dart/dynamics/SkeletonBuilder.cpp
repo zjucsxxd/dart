@@ -40,47 +40,65 @@
  *   POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DART_UTILS_SKELETONBUILDER_H_
-#define DART_UTILS_SKELETONBUILDER_H_
-
-#include "dart/common/Factory.h"
-#include "dart/dynamics/BodyNode.h"
-#include "dart/dynamics/Joint.h"
-#include "dart/dynamics/Skeleton.h"
+#include "dart/dynamics/SkeletonBuilder.h"
 
 namespace dart {
-namespace utils {
+namespace dynamics {
 
-class SkeletonBuilder
+SkeletonBuilder::SkeletonBuilder(dynamics::Skeleton* _skel)
+  : mSkeleton(_skel)
 {
-public:
-  SkeletonBuilder(dynamics::Skeleton* _skel);
-  virtual ~SkeletonBuilder();
+  assert(_skel != nullptr);
+}
 
-  virtual dynamics::BodyNode* createBodyNode(const std::string& _name)
-  { return new dynamics::BodyNode(); }
+SkeletonBuilder::~SkeletonBuilder()
+{
 
-  virtual dynamics::Joint* createJoint(const std::string& _type,
-                                       const std::string& _name,
-                                       const std::string& _body1Name,
-                                       const std::string& _body2Name)
+}
+
+BodyNode* SkeletonBuilder::createBodyNode()
+{
+  BodyNode* newBodyNode = new BodyNode();
+
+  mBodyNodePool.push_back(newBodyNode);
+
+  return newBodyNode;
+}
+
+bool SkeletonBuilder::build()
+{
+  // TODO: reset skeleton
+  mSkeleton;
+
+  for (const auto& body : mBodyNodePool)
   {
-    dynamics::Joint* newJoint = common::Factory<dynamics::Joint>::createObject(_type);
-    return newJoint;
+    body->setParentJoint(nullptr);
+//    body->removeAllChildBodyNodes();
   }
 
-  virtual bool build() { return true; }
+  // TODO: need graph
+//  buildGraph();
+//  buildTree();
 
-protected:
-  dynamics::Skeleton* mSkeleton;
+//  if (mBaseBodyNode == nullptr)
+//  {}
 
+  // TODO(JS): Implement graph and tree
 
+//  mBodyNodes = mBodyNodePool;
+//  mJoints = mJointPool;
 
-private:
+//  for (const auto& body : mBodyNodes)
+//  {
+//    body->setParentJoint(nullptr);
+//  }
 
-};
+//  for (auto& joint : mJoints)
+//    joint->build();
 
-}  // namespace utils
+  return true;
+}
+
+}  // namespace dynamics
 }  // namespace dart
 
-#endif  // DART_UTILS_SKELETONBUILDER_H_

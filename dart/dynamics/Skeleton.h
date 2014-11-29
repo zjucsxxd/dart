@@ -135,10 +135,12 @@ public:
   // Structueral Properties
   //----------------------------------------------------------------------------
 
-  /// \brief Create a BodyNode with a given name
+  /// \brief Create the root BodyNode
   /// \return BodyNode pointer if the BodyNode was created, or nullptr if not
   BodyNode* createRootBodyNode(const std::string& _jointType);
 
+  /// \brief Create a BodyNode
+  /// \return BodyNode pointer if the BodyNode was created, or nullptr if not
   BodyNode* createBodyNode(BodyNode* _parentBodyNode,
                            const std::string& _jointType);
 
@@ -155,6 +157,7 @@ public:
 //  bool destroyAllBodyNodes();
 
   /// Add a body node
+  DEPRECATED(4.3)
   void addBodyNode(BodyNode* _body);
 
   /// Get number of body nodes
@@ -194,6 +197,7 @@ public:
   // Initialization
   //----------------------------------------------------------------------------
   /// Initialize this skeleton for kinematics and dynamics
+  DEPRECATED(4.3)
   void init(double _timeStep = 0.001,
             const Eigen::Vector3d& _gravity = Eigen::Vector3d(0.0, 0.0, -9.81));
 

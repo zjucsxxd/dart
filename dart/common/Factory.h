@@ -59,11 +59,9 @@ public:
     // If ret.second is true, then name is new key and ret.first is the iterator
     // pointing the new key. If ret.second is false, then reg already has name
     // and ret.first is the iterator point the first key of reg.
-    std::pair<typename ObjectMap::iterator, bool> ret =
-        getOrCreateObjectMap()->insert(
-          typename ObjectMap::value_type(
-            type,
-            _registerFunction));
+    std::pair<typename ObjectMap::iterator, bool> ret
+        = getOrCreateObjectMap()->insert(
+            typename ObjectMap::value_type(type, _registerFunction));
 
     if (ret.second == false)
     {
@@ -83,14 +81,24 @@ public:
   static Base* createObject(const std::string& _type)
   {
     Factory::ObjectMap* map = Factory::getOrCreateObjectMap();
-    typename ObjectMap::iterator it = map->find(_type);
+    typename ObjectMap::const_iterator it = map->find(_type);
     if (it != map->end())
       return (it->second());
 
     return nullptr;
   }
 
-  /// \brief Return true if TEST_T and _type are match, return false otherwise
+  static bool isCreatable(const std::string& _type)
+  {
+    Factory::ObjectMap* map = Factory::getOrCreateObjectMap();
+    typename ObjectMap::const_iterator& it = map->find(_type);
+    if (it != map->end())
+      return true;
+    else
+      return false;
+  }
+
+  /// \brief Return true if TEST_T and _type are matched, return false otherwise
   template<typename TEST_T>
   static bool isValidType(const std::string& _type)
   {
@@ -157,7 +165,7 @@ private:
   {
     // Register the class factory function
     Factory<Base>::registerObject(_name,
-                            [](void) -> Base* { return new Derived(); });
+                                  [](void) -> Base* { return new Derived(); });
   }
 
   /// \brief Constructor

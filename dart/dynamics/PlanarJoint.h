@@ -65,7 +65,6 @@ public:
 
   /// \brief Constructor
   /// \warning This function will turn to protected member since DART 5.0.
-  /// Please use Skeleton::createJoint() to create joint.
   explicit PlanarJoint(const std::string& _name = "PlanarJoint");
 
   /// brief Destructor

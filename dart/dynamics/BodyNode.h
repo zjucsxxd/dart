@@ -71,6 +71,7 @@ class BodyNode
 {
 public:
   /// Constructor
+  /// \warning This function will turn to protected member since DART 5.0.
   explicit BodyNode(const std::string& _name = "BodyNode");
 
   /// Destructor
@@ -180,6 +181,7 @@ public:
   BodyNode* getParentBodyNode() const;
 
   /// Add a child bodynode into the bodynode
+  DEPRECATED(4.3)
   void addChildBodyNode(BodyNode* _body);
 
   /// \brief

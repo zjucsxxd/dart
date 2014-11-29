@@ -53,7 +53,6 @@ class FreeJoint : public MultiDofJoint<6>
 public:
   /// \brief Constructor
   /// \warning This function will turn to protected member since DART 5.0.
-  /// Please use Skeleton::createJoint() to create joint.
   explicit FreeJoint(const std::string& _name = "FreeJoint");
 
   /// brief Destructor
