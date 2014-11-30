@@ -135,18 +135,21 @@ public:
   // Structueral Properties
   //----------------------------------------------------------------------------
 
-  /// \brief Create the root BodyNode
+  /// \brief Create the root BodyNode with it's parent Joint
   /// \return BodyNode pointer if the BodyNode was created, or nullptr if not
   BodyNode* createRootBodyNode(const std::string& _jointType);
 
-  /// \brief Create a BodyNode
+  /// \brief Create a BodyNode with it's parent Joint
+  /// \param [in] _parentBodyNode Parent BodyNode of the creating BodyNode. This
+  /// can be
+  /// \param [in] _jointType
   /// \return BodyNode pointer if the BodyNode was created, or nullptr if not
   BodyNode* createBodyNode(BodyNode* _parentBodyNode,
                            const std::string& _jointType);
 
-//  /// \brief Destroy a BodyNode with a given BodyNode pointer
-//  /// \return True on success, or false otherwise
-//  bool destroyBodyNode(BodyNode* _bodyNode);
+  /// \brief Destroy a BodyNode with a given BodyNode pointer
+  /// \return True on success, or false otherwise
+  bool destroyBodyNode(BodyNode* _bodyNode);
 
 //  /// \brief Destroy a BodyNode with a given name
 //  /// \return True on success, or false otherwise

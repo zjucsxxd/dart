@@ -470,6 +470,7 @@ public:
   //----------------------------------------------------------------------------
 
   friend class Skeleton;
+  friend class SkeletonBuilder;
   friend class Joint;
   friend class SoftBodyNode;
   friend class PointMass;

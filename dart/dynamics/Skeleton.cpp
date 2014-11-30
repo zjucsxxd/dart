@@ -177,13 +177,6 @@ double Skeleton::getMass() const
 //==============================================================================
 BodyNode* Skeleton::createRootBodyNode(const std::string& _jointType)
 {
-  // Check if this is the first BodyNode
-  if (!mBodyNodes.empty())
-  {
-    dterr << "Root body node already exists." << std::endl;
-    return nullptr;
-  }
-
   return createBodyNode(nullptr, _jointType);
 }
 
@@ -191,6 +184,17 @@ BodyNode* Skeleton::createRootBodyNode(const std::string& _jointType)
 BodyNode* Skeleton::createBodyNode(BodyNode* _parentBodyNode,
                                    const std::string& _jointType)
 {
+  if (_parentBodyNode == nullptr)
+  {
+    // Check if this is the first BodyNode
+    if (!mBodyNodes.empty())
+    {
+      dterr << "Parent body node should be specified except for the root."
+            << std::endl;
+      return nullptr;
+    }
+  }
+
   // Create joint
   Joint* newJoint = common::Factory<Joint>::createObject(_jointType);
   if (newJoint == nullptr)
@@ -214,36 +218,28 @@ BodyNode* Skeleton::createBodyNode(BodyNode* _parentBodyNode,
   return newBodyNode;
 }
 
-////==============================================================================
-//bool Skeleton::destroyBodyNode(BodyNode* _bodyNode)
-//{
-//  assert(_bodyNode != nullptr);
+//==============================================================================
+bool Skeleton::destroyBodyNode(BodyNode* _bodyNode)
+{
+  assert(_bodyNode != nullptr);
 
-//  //  auto res = std::find(mBodyNodes.begin(), mBodyNodes.end(), _bodyNode);
+  const auto res = std::find(mBodyNodes.begin(), mBodyNodes.end(), _bodyNode);
 
-////  if (res != mBodyNodes.end())
-////  {
-////    mBodyNodes.erase(res);
+  if (res != mBodyNodes.end())
+  {
+    mBodyNodes.erase(res);
 
-////    assert(mNameMgr.hasName(_bodyNode->getName()));
-////    mNameMgr.removeName(_bodyNode->getName());
+//    assert(mNameMgr.hasName(_bodyNode->getName()));
+//    mNameMgr.removeName(_bodyNode->getName());
 
-////    if (_bodyNode == mBaseBodyNode)
-////    {
-////      if (!mBodyNodes.empty())
-////        mBaseBodyNode = mBodyNodes[0];
-////      else
-////        mBaseBodyNode = nullptr;
-////    }
-
-////    delete _bodyNode;
-////    return true;
-////  }
-////  else
-////  {
-//    return false;
-////  }
-//}
+    delete _bodyNode;
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
 
 ////==============================================================================
 //bool Skeleton::destroyBodyNode(const std::string& _name)
