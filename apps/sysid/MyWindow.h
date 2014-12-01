@@ -15,8 +15,6 @@ public:
 
   virtual void timeStepping();
 
-  bool everythingFinished;
-
 protected:
 
   Controller* mController;

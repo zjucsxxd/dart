@@ -8,8 +8,9 @@
 #include "dart/dynamics/WeldJoint.h"
 
 #include <cstdlib>
+#include <iomanip>
 
-Controller::Controller(dart::dynamics::Skeleton* _robot) :
+Controller::Controller(dart::dynamics::Skeleton* _robot, bool _floater) :
   max_torque(1),
   step(0),
   mRobot(_robot),
@@ -18,6 +19,7 @@ Controller::Controller(dart::dynamics::Skeleton* _robot) :
   caught_input_nan(false),
   caught_output_nan(false)
 {
+  floater = _floater;
   srand(time(NULL));
 
   size_t nDof = mRobot->getNumDofs();
@@ -26,6 +28,14 @@ Controller::Controller(dart::dynamics::Skeleton* _robot) :
 
   mTorques = Eigen::VectorXd::Zero(nDof);
 
+  const double scale = 10;
+//  const double scale = 1;
+  for(size_t i=0; i<nDof; ++i)
+  {
+    mKp(i,i) = 400.0*scale;
+    mKd(i,i) = 40*scale;
+  }
+
   if(floater)
   {
     for(size_t i=0; i<6; ++i)
@@ -33,14 +43,6 @@ Controller::Controller(dart::dynamics::Skeleton* _robot) :
       mKp(i, i) = 0;
       mKd(i, i) = 0;
     }
-  }
-
-  const double scale = 10;
-//  const double scale = 1;
-  for(size_t i=6; i<nDof; ++i)
-  {
-    mKp(i,i) = 400.0*scale;
-    mKd(i,i) = 40*scale;
   }
 
 //  const double ankles = 10;
@@ -61,7 +63,7 @@ Controller::Controller(dart::dynamics::Skeleton* _robot) :
 //  }
 
   mPreOffset = 0.0;
-  floater = true;
+  lap = 0;
 }
 
 const std::vector<Eigen::VectorXd>& Controller::getActualTrajectory() const
@@ -92,11 +94,10 @@ void Controller::grab_dynamics()
   using namespace dart::dynamics;
 
   size_t n = mRobot->getNumBodyNodes();
-  size_t dof = mRobot->getNumDofs();
-  Eigen::MatrixXd sampleDynamics(dof,10*n);
+  Eigen::MatrixXd sampleDynamics(6*n,10*n);
   sampleDynamics.setZero();
-//  Eigen::VectorXd sampleForces(dof);
-//  sampleForces.setZero();
+  Eigen::VectorXd sampleForces(6*n);
+  sampleForces.setZero();
 
   mSampleA.clear();
   for(size_t i=0; i<n; ++i)
@@ -108,31 +109,80 @@ void Controller::grab_dynamics()
                 << "\n---------------" << std::endl;
   }
 
-  size_t location = 0;
   for(size_t i=0; i<n; ++i)
   {
-    Joint* joint = mRobot->getJoint(i);
-
-    Eigen::MatrixXd localJ = joint->getLocalJacobian();
-    size_t s = localJ.cols();
+    BodyNode* bn = mRobot->getBodyNode(i);
 
     for(size_t j=i; j<n; ++j)
     {
       if(!descendsFrom(mRobot, i, j))
         continue;
 
-      const Eigen::Matrix6d X = calculator.computeSpatialTransform(j, i);
-      sampleDynamics.block(location, 10*j, s, 10) = localJ.transpose()*X*mSampleA[j];
+//      const Eigen::Matrix6d X = calculator.computeSpatialTransform(j, i);
+      const Eigen::Matrix6d X = calculator.computeSpatialForceTransform(i, j);
+      sampleDynamics.block(6*i, 10*j, 6, 10) = X*mSampleA[j];
     }
-//    sampleForces.block(location, 0, s, 1) = joint->getForces();
-
-    location += s;
+    sampleForces.block(6*i, 0, 6, 1) = bn->getBodyForce();
   }
 
+//  for(size_t i=0; i<sampleDynamics.rows(); ++i)
+//  {
+//    for(size_t j=0; j<sampleDynamics.cols(); ++j)
+//      std::cout << std::setw(10) << std::setprecision(3) << sampleDynamics(i,j);
+//    std::cout << "\n";
+//  }
+//  std::cout << std::flush;
+
   mSampleDynamics.push_back(sampleDynamics);
-//  mSampleForces.push_back(sampleForces);
-  mSampleForces.push_back(mTorques);
+  mSampleForces.push_back(sampleForces);
 }
+
+//void Controller::grab_dynamics()
+//{
+//  using namespace dart::dynamics;
+
+//  size_t n = mRobot->getNumBodyNodes();
+//  size_t dof = mRobot->getNumDofs();
+//  Eigen::MatrixXd sampleDynamics(dof,10*n);
+//  sampleDynamics.setZero();
+////  Eigen::VectorXd sampleForces(dof);
+////  sampleForces.setZero();
+
+//  mSampleA.clear();
+//  for(size_t i=0; i<n; ++i)
+//  {
+//    mSampleA.push_back(calculator.computeA(i));
+//    if(dart::math::isNan(mSampleA[i]))
+//      std::cout << "NaN: " << mRobot->getJoint(i)->getName()
+//                << "\n" << mSampleA[i]
+//                << "\n---------------" << std::endl;
+//  }
+
+//  size_t location = 0;
+//  for(size_t i=0; i<n; ++i)
+//  {
+//    Joint* joint = mRobot->getJoint(i);
+
+//    Eigen::MatrixXd localJ = joint->getLocalJacobian();
+//    size_t s = localJ.cols();
+
+//    for(size_t j=i; j<n; ++j)
+//    {
+//      if(!descendsFrom(mRobot, i, j))
+//        continue;
+
+//      const Eigen::Matrix6d X = calculator.computeSpatialTransform(j, i);
+//      sampleDynamics.block(location, 10*j, s, 10) = localJ.transpose()*X*mSampleA[j];
+//    }
+////    sampleForces.block(location, 0, s, 1) = joint->getForces();
+
+//    location += s;
+//  }
+
+//  mSampleDynamics.push_back(sampleDynamics);
+////  mSampleForces.push_back(sampleForces);
+//  mSampleForces.push_back(mTorques);
+//}
 
 void Controller::compute_torques(size_t i1, size_t i0)
 {
@@ -193,9 +243,12 @@ void Controller::update()
 {
   using namespace dart::dynamics;
 
+  if(lap >= 2)
+    return;
+
 //  if(0 < step && step <= mDesiredTrajectory.size())
 //    grab_dynamics();
-  if(step%50 == 0)
+  if( (0<step) && (step%50==0) )
     grab_dynamics();
 
   if(mDesiredTrajectory.size() == 0)
@@ -207,11 +260,22 @@ void Controller::update()
 
   if(finished && !finish_notice)
   {
-    std::cout << "Reached end" << std::endl;
+//    std::cout << "Reached end" << std::endl;
     finish_notice = true;
   }
 
-  compute_torques(index1, index0);
+  if(lap==0)
+  {
+    compute_torques(index1, index0);
+    mTorqueHistory.push_back(mTorques);
+    mActualTrajectory.push_back(mRobot->getPositions());
+  }
+  else
+  {
+    mTorques = mTorqueHistory[step];
+    mPredictedTrajectory.push_back(mRobot->getPositions());
+  }
+
 
   mRobot->setForces(mTorques);
 
@@ -219,7 +283,55 @@ void Controller::update()
 }
 
 
-void Controller::startPostProcessing()
+void Controller::doPostProcessing()
 {
-  calculator.postProcessing(mRobot, mSampleForces, mSampleDynamics);
+  using namespace dart::dynamics;
+  if(lap==0)
+  {
+    calculator.postProcessing(mRobot, mSampleForces, mSampleDynamics);
+//    Eigen::VectorXd parameters = calculator.postProcessing(mRobot, mSampleForces, mSampleDynamics);
+
+//    for(size_t i=0; i<mRobot->getNumBodyNodes(); ++i)
+//    {
+//      BodyNode* bn = mRobot->getBodyNode(i);
+//      double mass = parameters[10*i];
+//      bn->setMass(mass);
+//      if(mass)
+//        bn->setLocalCOM(parameters.block<3,1>(10*i+1,0)/mass);
+//      else
+//        bn->setLocalCOM(Eigen::Vector3d::Zero());
+//      bn->setMomentOfInertia(parameters[10*i+4], parameters[10*i+7], parameters[10*i+9],
+//                             parameters[10*i+5], parameters[10*i+6], parameters[10*i+8]);
+//    }
+
+    return;
+  }
+
+  if(mActualTrajectory.size() != mPredictedTrajectory.size())
+    std::cout << "Size difference between actual and predicted waypoints: "
+              << mActualTrajectory.size() << " | " << mPredictedTrajectory.size()
+              << std::endl;
+  size_t N = std::min(mActualTrajectory.size(), mPredictedTrajectory.size());
+
+  double diff = 0;
+  for(size_t i=0; i<N; ++i)
+  {
+    diff += (mActualTrajectory[i]-mPredictedTrajectory[i]).dot(
+        (mActualTrajectory[i]-mPredictedTrajectory[i]));
+  }
+
+  diff = sqrt(diff);
+  std::cout << "Error between trajectories: " << diff << std::endl;
 }
+
+void Controller::reset()
+{
+  step = 0;
+  finish_notice = false;
+
+  mSampleA.clear();
+  mSampleForces.clear();
+  mSampleDynamics.clear();
+}
+
+

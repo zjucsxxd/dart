@@ -165,9 +165,9 @@ void SimWindow::draw() {
 #else
     std::snprintf(buff, sizeof(buff), "%d", mWorld->getSimFrames());
 #endif
-  std::string frame(buff);
-  glColor3f(0.0, 0.0, 0.0);
-  gui::drawStringOnScreen(0.02f, 0.02f, frame);
+//  std::string frame(buff);
+//  glColor3f(0.0, 0.0, 0.0);
+//  gui::drawStringOnScreen(0.02f, 0.02f, frame);
   glEnable(GL_LIGHTING);
 }
 

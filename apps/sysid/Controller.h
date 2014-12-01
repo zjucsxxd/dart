@@ -11,7 +11,7 @@ class Controller
 {
 public:
 
-  Controller(dart::dynamics::Skeleton* _robot);
+  Controller(dart::dynamics::Skeleton* _robot, bool _floater=true);
 
   std::vector<Eigen::VectorXd> mDesiredTrajectory;
 
@@ -24,6 +24,7 @@ public:
   Eigen::MatrixXd mKp;
   Eigen::MatrixXd mKd;
   Eigen::VectorXd mTorques;
+  std::vector<Eigen::VectorXd> mTorqueHistory;
   double mPreOffset;
 
   double max_torque;
@@ -31,9 +32,13 @@ public:
 
   inline bool finished() const { return finish_notice; }
 
-  void startPostProcessing();
+  void doPostProcessing();
 
   bool floater;
+
+  void reset();
+
+  size_t lap;
 
 protected:
 
@@ -42,6 +47,7 @@ protected:
   dart::dynamics::Skeleton* mRobot;
 
   std::vector<Eigen::VectorXd> mActualTrajectory;
+  std::vector<Eigen::VectorXd> mPredictedTrajectory;
   std::vector<Eigen::VectorXd> mActualVelocities;
   std::vector<Eigen::VectorXd> mActualAccelerations;
   std::vector<Eigen::Vector6d> mExternalForces;

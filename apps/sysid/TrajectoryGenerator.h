@@ -16,7 +16,9 @@ class TrajectoryGenerator
 public:
   TrajectoryGenerator(dart::dynamics::Skeleton* _robot,
                       const std::vector<dart::dynamics::BodyNode*>& _left_leg,
-                      const std::vector<dart::dynamics::BodyNode*>& _right_leg);
+                      const std::vector<dart::dynamics::BodyNode*>& _right_leg,
+                      const std::vector<dart::dynamics::BodyNode*>& _left_arm,
+                      const std::vector<dart::dynamics::BodyNode*>& _right_arm);
 
   void squat(Eigen::VectorXd& config, double time, double depth, double sway);
   void arm_swing(Eigen::VectorXd& config, double time, double amplitude);
@@ -36,6 +38,10 @@ protected:
   size_t left_leg_dofs;
   std::vector<dart::dynamics::BodyNode*> right_leg;
   size_t right_leg_dofs;
+  std::vector<dart::dynamics::BodyNode*> left_arm;
+  size_t left_arm_dofs;
+  std::vector<dart::dynamics::BodyNode*> right_arm;
+  size_t right_arm_dofs;
 
   dart::dynamics::Skeleton* robot;
 

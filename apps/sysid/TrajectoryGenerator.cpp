@@ -6,9 +6,13 @@
 
 TrajectoryGenerator::TrajectoryGenerator(dart::dynamics::Skeleton* _robot,
                                          const std::vector<dart::dynamics::BodyNode*>& _left_leg,
-                                         const std::vector<dart::dynamics::BodyNode*>& _right_leg) :
+                                         const std::vector<dart::dynamics::BodyNode*>& _right_leg,
+                                         const std::vector<dart::dynamics::BodyNode*>& _left_arm,
+                                         const std::vector<dart::dynamics::BodyNode*>& _right_arm) :
   left_leg(_left_leg),
   right_leg(_right_leg),
+  left_arm(_left_arm),
+  right_arm(_right_arm),
   robot(_robot)
 {
   base_left = _left_leg.back()->getTransform();
@@ -26,6 +30,14 @@ TrajectoryGenerator::TrajectoryGenerator(dart::dynamics::Skeleton* _robot,
   right_leg_dofs = 0;
   for(size_t i=0; i<right_leg.size(); ++i)
     right_leg_dofs += right_leg[i]->getParentJoint()->getNumDofs();
+
+  left_arm_dofs = 0;
+  for(size_t i=0; i<left_arm.size(); ++i)
+    left_arm_dofs += left_arm[i]->getParentJoint()->getNumDofs();
+
+  right_arm_dofs = 0;
+  for(size_t i=0; i<right_arm.size(); ++i)
+    right_arm_dofs += right_arm[i]->getParentJoint()->getNumDofs();
 }
 
 
@@ -143,11 +155,35 @@ void TrajectoryGenerator::squat(Eigen::VectorXd &config, double time, double dep
 
 void TrajectoryGenerator::arm_swing(Eigen::VectorXd &config, double time, double amplitude)
 {
-  size_t lsp = robot->getJoint("j_bicep_left")->getIndexInSkeleton(1);
-  size_t rsp = robot->getJoint("j_bicep_right")->getIndexInSkeleton(1);
+  using namespace dart::dynamics;
+//  size_t lsp = robot->getJoint("j_bicep_left")->getIndexInSkeleton(1);
+//  size_t rsp = robot->getJoint("j_bicep_right")->getIndexInSkeleton(1);
+
+  size_t lsp = robot->getJoint("LSP")->getIndexInSkeleton(0);
+  size_t rsp = robot->getJoint("RSP")->getIndexInSkeleton(0);
 
   config[lsp] = amplitude*sin(time*2*M_PI/period);
-  config[rsp] = amplitude*sin(time*2*M_PI/period);
+  config[rsp] = -amplitude*sin(time*2*M_PI/period);
+
+//  for(size_t i=0; i<left_arm.size(); ++i)
+//  {
+//    Joint* joint = left_arm[i]->getParentJoint();
+//    for(size_t j=0; j<joint->getNumDofs(); ++j)
+//    {
+//      size_t index = joint->getIndexInSkeleton(j);
+//      config[index] = amplitude*sin(time*2*M_PI/period);
+//    }
+//  }
+
+//  for(size_t i=0; i<right_arm.size(); ++i)
+//  {
+//    Joint* joint = right_arm[i]->getParentJoint();
+//    for(size_t j=0; j<joint->getNumDofs(); ++j)
+//    {
+//      size_t index = joint->getIndexInSkeleton(j);
+//      config[index] = -amplitude*sin(time*2*M_PI/period);
+//    }
+//  }
 
   robot->setPositions(config);
 }
@@ -164,7 +200,8 @@ std::vector<Eigen::VectorXd> TrajectoryGenerator::createTrajectory()
 
     arm_swing(config, t, M_PI/4);
 
-    squat(config, t, 0.4, 0.06);
+//    squat(config, t, 0.3, 0.0);
+    squat(config, t, 0.0, -0.3);
 
     trajectory.push_back(config);
   }
