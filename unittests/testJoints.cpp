@@ -168,7 +168,7 @@ void Joints::kinematicsTest(Joint* _joint)
       numericJ.col(i) = Ji;
     }
 
-    if (dynamic_cast<BallJoint*>(_joint) || dynamic_cast<FreeJoint*>(_joint))
+    if (/*dynamic_cast<BallJoint*>(_joint) || */dynamic_cast<FreeJoint*>(_joint))
     {
       // Skip this test for BallJoint and FreeJoint since Jacobian of BallJoint
       // and FreeJoint is not obtained by the above method.
@@ -208,7 +208,7 @@ void Joints::kinematicsTest(Joint* _joint)
     }
 
 
-    if (dynamic_cast<BallJoint*>(_joint) || dynamic_cast<FreeJoint*>(_joint))
+    if (/*dynamic_cast<BallJoint*>(_joint) || */dynamic_cast<FreeJoint*>(_joint))
     {
       // Skip this test for BallJoint and FreeJoint since time derivative of
       // Jacobian of BallJoint and FreeJoint is not obtained by the above

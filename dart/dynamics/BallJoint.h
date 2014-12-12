@@ -75,6 +75,30 @@ public:
   // Documentation inherited
   virtual Eigen::VectorXd getPositions() const;
 
+  // Documentation inherited
+  virtual void setVelocity(size_t _index, double _velocity) override;
+
+  // Documentation inherited
+  virtual double getVelocity(size_t _index) const override;
+
+  // Documentation inherited
+  virtual void setVelocities(const Eigen::VectorXd& _velocities) override;
+
+  // Documentation inherited
+  virtual Eigen::VectorXd getVelocities() const override;
+
+  // Documentation inherited
+  virtual void setAcceleration(size_t _index, double _acceleration) override;
+
+  // Documentation inherited
+  virtual double getAcceleration(size_t _index) const override;
+
+  // Documentation inherited
+  virtual void setAccelerations(const Eigen::VectorXd& _accelerations) override;
+
+  // Documentation inherited
+  virtual Eigen::VectorXd getAccelerations() const override;
+
 protected:
   // Documentation inherited
   virtual void integratePositions(double _dt);

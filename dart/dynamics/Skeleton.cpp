@@ -395,6 +395,16 @@ GenCoordInfo Skeleton::getGenCoordInfo(size_t _index) const
 //==============================================================================
 void Skeleton::setTransformGenCoordType(TransformGenCoordType _type)
 {
+  if (mTransformGenCoordType == _type)
+    return;
+
+  // TODO(JS): Need more smart cascading the dirty flags. Let's do this with
+  // 'Intelligent Auto-Updating for Forward Kinematics', which is Grey's
+  // proposal. All the descendant of all the FreeJoint should be set their flags
+  // to dirty.
+  for (auto& body : mBodyNodes)
+    body->mIsBodyJacobianDirty = true;
+
   mTransformGenCoordType = _type;
 }
 
@@ -407,6 +417,16 @@ TransformGenCoordType Skeleton::getTransformGenCoordType() const
 //==============================================================================
 void Skeleton::setRotationGenCoordType(RotationGenCoordType _type)
 {
+  if (mRotationGenCoordType == _type)
+    return;
+
+  // TODO(JS): Need more smart cascading the dirty flags. Let's do this with
+  // 'Intelligent Auto-Updating for Forward Kinematics', which is Grey's
+  // proposal. All the descendant of all the BallJoint should be set their flags
+  // to dirty.
+  for (auto& body : mBodyNodes)
+    body->mIsBodyJacobianDirty = true;
+
   mRotationGenCoordType = _type;
 }
 
@@ -463,6 +483,11 @@ Eigen::VectorXd Skeleton::getPositions() const
   size_t dof = getNumDofs();
   Eigen::VectorXd pos(dof);
 
+  // TODO(JS): collect generalized coordinate positions per joint so that can
+  // take the advantage of getting joint positions at once using
+  // Joint::getPositions() rather than one by one using
+  // Joint::getPosition(size_t). This needs to be applied to all the functions,
+  // [get/set][Positions/Velocities/Accelerations/Forces].
   for (size_t i = 0; i < dof; ++i)
   {
     pos[index++]

@@ -188,6 +188,54 @@ Eigen::VectorXd BallJoint::getPositions() const
 }
 
 //==============================================================================
+void BallJoint::setVelocity(size_t _index, double _velocity)
+{
+
+}
+
+//==============================================================================
+double BallJoint::getVelocity(size_t _index) const
+{
+
+}
+
+//==============================================================================
+void BallJoint::setVelocities(const Eigen::VectorXd& _velocities)
+{
+
+}
+
+//==============================================================================
+Eigen::VectorXd BallJoint::getVelocities() const
+{
+
+}
+
+//==============================================================================
+void BallJoint::setAcceleration(size_t _index, double _acceleration)
+{
+
+}
+
+//==============================================================================
+double BallJoint::getAcceleration(size_t _index) const
+{
+
+}
+
+//==============================================================================
+void BallJoint::setAccelerations(const Eigen::VectorXd& _accelerations)
+{
+
+}
+
+//==============================================================================
+Eigen::VectorXd BallJoint::getAccelerations() const
+{
+
+}
+
+//==============================================================================
 void BallJoint::integratePositions(double _dt)
 {
   mR.linear() = mR.linear() * math::expMapRot(mVelocities * _dt);

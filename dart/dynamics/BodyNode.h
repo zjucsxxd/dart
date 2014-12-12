@@ -651,12 +651,19 @@ protected:
   math::Jacobian mBodyJacobian;
 
   /// Dirty flag for body Jacobian.
+  ///
+  /// Since body Jacobian is a function of generalized positions and type of the
+  /// generalized coordiantes, this flag will be set to when they are changed.
   bool mIsBodyJacobianDirty;
 
   /// Time derivative of body Jacobian.
   math::Jacobian mBodyJacobianDeriv;
 
   /// Dirty flag for time derivative of body Jacobian.
+  ///
+  /// Since time derivative of body Jacobian is a function of generalized
+  /// positions, velocities, and type of the generalized coordiantes, this flag
+  /// will be set to when they are changed.
   bool mIsBodyJacobianDerivDirty;
 
   /// Spatial body velocity w.r.t. body frame

@@ -1623,9 +1623,9 @@ void BodyNode::_updateBodyJacobian()
            == mBodyJacobian.cols());
 
     assert(mParentJoint);
-    mBodyJacobian.leftCols(ascendantDof) =
-        math::AdInvTJac(mParentJoint->getLocalTransform(),
-                        mParentBodyNode->getBodyJacobian());
+    mBodyJacobian.leftCols(ascendantDof)
+        = math::AdInvTJac(mParentJoint->getLocalTransform(),
+                          mParentBodyNode->getBodyJacobian());
   }
 
   // Local Jacobian
@@ -1651,7 +1651,7 @@ void BodyNode::_updateBodyJacobianDeriv()
 
   const int numLocalDOFs = mParentJoint->getNumDofs();
   const int numParentDOFs = getNumDependentGenCoords() - numLocalDOFs;
-  math::Jacobian J = getBodyJacobian();
+  const math::Jacobian J = getBodyJacobian();
 
   // Parent Jacobian
   if (mParentBodyNode)
