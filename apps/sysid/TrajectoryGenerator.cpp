@@ -159,11 +159,23 @@ void TrajectoryGenerator::arm_swing(Eigen::VectorXd &config, double time, double
 //  size_t lsp = robot->getJoint("j_bicep_left")->getIndexInSkeleton(1);
 //  size_t rsp = robot->getJoint("j_bicep_right")->getIndexInSkeleton(1);
 
-  size_t lsp = robot->getJoint("LSP")->getIndexInSkeleton(0);
-  size_t rsp = robot->getJoint("RSP")->getIndexInSkeleton(0);
+  size_t lsr = robot->getJoint("j_bicep_left")->getIndexInSkeleton(2);
+  size_t rsr = robot->getJoint("j_bicep_right")->getIndexInSkeleton(2);
 
-  config[lsp] = amplitude*sin(time*2*M_PI/period);
-  config[rsp] = -amplitude*sin(time*2*M_PI/period);
+  config[lsr] =  amplitude*(1-cos(time*2*M_PI/period))/2;
+  config[rsr] = -amplitude*(1-cos(time*2*M_PI/period))/2;
+
+//  size_t lsp = robot->getJoint("LSP")->getIndexInSkeleton(0);
+//  size_t lep = robot->getJoint("LEP")->getIndexInSkeleton(0);
+
+//  size_t rsp = robot->getJoint("RSP")->getIndexInSkeleton(0);
+//  size_t rep = robot->getJoint("REP")->getIndexInSkeleton(0);
+
+//  config[lsp] = amplitude*sin(time*2*M_PI/period);
+//  config[rsp] = -amplitude*sin(time*2*M_PI/period);
+
+//  config[lep] = -amplitude*(1-cos(time*2*M_PI/period))/2;
+//  config[rep] = -amplitude*(1-cos(time*2*M_PI/period))/2;
 
 //  for(size_t i=0; i<left_arm.size(); ++i)
 //  {
@@ -194,14 +206,28 @@ std::vector<Eigen::VectorXd> TrajectoryGenerator::createTrajectory()
   Eigen::VectorXd config = robot->getPositions();
 
   period = 10;
-  for(size_t i=0; i<(size_t)period/robot->getTimeStep(); ++i)
+  for(size_t i=0; i<(size_t)(period/robot->getTimeStep()); ++i)
   {
     double t = i*robot->getTimeStep();
 
-    arm_swing(config, t, M_PI/4);
+//    arm_swing(config, t, M_PI/4);
+    arm_swing(config, t, M_PI);
 
-//    squat(config, t, 0.3, 0.0);
-    squat(config, t, 0.0, -0.3);
+    // Hubo
+//    squat(config, t, 0.0, -0.25);
+
+    squat(config, t, 0.3, 0.1);
+
+    trajectory.push_back(config);
+  }
+
+  for(size_t i=0; i<(size_t)(period/robot->getTimeStep()); ++i)
+  {
+    double t = i*robot->getTimeStep();
+
+    arm_swing(config, t, M_PI);
+
+    squat(config, t, 0.3, -0.1);
 
     trajectory.push_back(config);
   }

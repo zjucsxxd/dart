@@ -430,13 +430,13 @@ MyWindow* create_simple_arm()
 //  BodyNode* parent = createBaseLink(arm, false);
 //  BodyNode* parent = addBallLink(arm, NULL);
   BodyNode* parent = NULL;
-  for(size_t i=0; i<8; ++i)
+  for(size_t i=0; i<3; ++i)
   {
     parent = addSimpleLink(arm, parent);
   }
 //  parent = addTangentLink(arm, arm->getBodyNode(1));
 //  parent = addTangentLink(arm, parent);
-//  parent = addBallLink(arm, parent);
+  parent = addBallLink(arm, parent);
 
   world->addSkeleton(arm);
 
@@ -463,8 +463,8 @@ int main(int argc, char* argv[])
 {
   srand(time(NULL));
 //  MyWindow* window = create_simple_humanoid();
-//  MyWindow* window = create_simple_arm();
-  MyWindow* window = create_hubo_world();
+  MyWindow* window = create_simple_arm();
+//  MyWindow* window = create_hubo_world();
 
   glutInit(&argc, argv);
   window->initWindow(640, 480, "Forward Simulation");
