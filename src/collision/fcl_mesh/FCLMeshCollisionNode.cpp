@@ -142,92 +142,91 @@ bool FCLMeshCollisionNode::detectCollision(
         if(res.isCollision()) {
             collision = true;
         }
-        if(!_contactPoints) {
-            return collision;
-        }
+        
+        if(_contactPoints) {
+            int numCoplanarContacts = 0;
+            int numNoContacts = 0;
+            int numContacts = 0;
 
-        int numCoplanarContacts = 0;
-        int numNoContacts = 0;
-        int numContacts = 0;
+            std::vector<Contact> unfilteredContactPoints;
+            unfilteredContactPoints.reserve(res.numContacts());
 
-        std::vector<Contact> unfilteredContactPoints;
-        unfilteredContactPoints.reserve(res.numContacts());
-
-        for(int k = 0; k < res.numContacts(); k++) {
-            // for each pair of intersecting triangles, we create two contact points
-            Contact pair1, pair2;
-//            pair1.bd1 = mBodyNode;
-//            pair1.bd2 = _otherNode->mBodyNode;
-//            pair1.bdID1 = this->mBodyNodeID;
-//            pair1.bdID2 = _otherNode->mBodyNodeID;
-            pair1.collisionNode1 = this;
-            pair1.collisionNode2 = _otherNode;
-            fcl::Vec3f v;
-            pair1.triID1 = res.getContact(k).b1;
-            pair1.triID2 = res.getContact(k).b2;
-            pair1.penetrationDepth = res.getContact(k).penetration_depth;
-            pair2 = pair1;
-            int contactResult = evalContactPosition(res.getContact(k), mMeshes[i], _otherNode->mMeshes[j],
-                                                    mFclWorldTrans, _otherNode->mFclWorldTrans, pair1.point, pair2.point);
-            if(contactResult == COPLANAR_CONTACT) {
-                numCoplanarContacts++;
-                //                if(numContacts != 0 || numCoplanarContacts > 1)
-                if (numContacts > 2)
-                    continue;
-            } else if(contactResult == NO_CONTACT) {
-                numNoContacts++;
-                continue;
-            } else {
-                numContacts++;
-            }
-            v = -res.getContact(k).normal;
-            pair1.normal = Eigen::Vector3d(v[0], v[1], v[2]);
-            pair2.normal = Eigen::Vector3d(v[0], v[1], v[2]);
-
-            unfilteredContactPoints.push_back(pair1);
-            unfilteredContactPoints.push_back(pair2);
-        }
-
-        const double ZERO = 0.000001;
-        const double ZERO2 = ZERO*ZERO;
-
-        std::vector<bool> markForDeletion(unfilteredContactPoints.size(), false);
-
-        // mark all the repeated points
-        for (unsigned int k = 0; k < unfilteredContactPoints.size(); k++) {
-            for (unsigned int l = k + 1; l < unfilteredContactPoints.size(); l++) {
-                Eigen::Vector3d diff = unfilteredContactPoints[k].point - unfilteredContactPoints[l].point;
-                if (diff.dot(diff) < 3 * ZERO2) {
-                    markForDeletion[k] = true;
-                    break;
-                }
-            }
-        }
-
-        // remove all the co-linear contact points
-        for (unsigned int k = 0; k < unfilteredContactPoints.size(); k++) {
-            if(markForDeletion[k])
-                continue;
-            for (unsigned int l = 0; l < unfilteredContactPoints.size(); l++) {
-                if (l == k || markForDeletion[l])
-                    continue;
-                if (markForDeletion[k])
-                    break;
-                for (int m = l + 1; m < unfilteredContactPoints.size(); m++) {
-                    if (k == m)
+            for(int k = 0; k < res.numContacts(); k++) {
+                // for each pair of intersecting triangles, we create two contact points
+                Contact pair1, pair2;
+//                pair1.bd1 = mBodyNode;
+//                pair1.bd2 = _otherNode->mBodyNode;
+//                pair1.bdID1 = this->mBodyNodeID;
+//                pair1.bdID2 = _otherNode->mBodyNodeID;
+                pair1.collisionNode1 = this;
+                pair1.collisionNode2 = _otherNode;
+                fcl::Vec3f v;
+                pair1.triID1 = res.getContact(k).b1;
+                pair1.triID2 = res.getContact(k).b2;
+                pair1.penetrationDepth = res.getContact(k).penetration_depth;
+                pair2 = pair1;
+                int contactResult = evalContactPosition(res.getContact(k), mMeshes[i], _otherNode->mMeshes[j],
+                                                        mFclWorldTrans, _otherNode->mFclWorldTrans, pair1.point, pair2.point);
+                if(contactResult == COPLANAR_CONTACT) {
+                    numCoplanarContacts++;
+                    //                if(numContacts != 0 || numCoplanarContacts > 1)
+                    if (numContacts > 2)
                         continue;
-                    Eigen::Vector3d  v = (unfilteredContactPoints[k].point - unfilteredContactPoints[l].point).cross(unfilteredContactPoints[k].point - unfilteredContactPoints[m].point);
-                    if (v.dot(v) < ZERO2 && ((unfilteredContactPoints[k].point - unfilteredContactPoints[l].point).dot(unfilteredContactPoints[k].point - unfilteredContactPoints[m].point) < 0)) {
+                } else if(contactResult == NO_CONTACT) {
+                    numNoContacts++;
+                    continue;
+                } else {
+                    numContacts++;
+                }
+                v = -res.getContact(k).normal;
+                pair1.normal = Eigen::Vector3d(v[0], v[1], v[2]);
+                pair2.normal = Eigen::Vector3d(v[0], v[1], v[2]);
+
+                unfilteredContactPoints.push_back(pair1);
+                unfilteredContactPoints.push_back(pair2);
+            }
+
+            const double ZERO = 0.000001;
+            const double ZERO2 = ZERO*ZERO;
+
+            std::vector<bool> markForDeletion(unfilteredContactPoints.size(), false);
+
+            // mark all the repeated points
+            for (unsigned int k = 0; k < unfilteredContactPoints.size(); k++) {
+                for (unsigned int l = k + 1; l < unfilteredContactPoints.size(); l++) {
+                    Eigen::Vector3d diff = unfilteredContactPoints[k].point - unfilteredContactPoints[l].point;
+                    if (diff.dot(diff) < 3 * ZERO2) {
                         markForDeletion[k] = true;
                         break;
                     }
                 }
             }
-        }
 
-        for (unsigned int k = 0; k < unfilteredContactPoints.size(); k++) {
-            if(!markForDeletion[k]) {
-                _contactPoints->push_back(unfilteredContactPoints[k]);
+            // remove all the co-linear contact points
+            for (unsigned int k = 0; k < unfilteredContactPoints.size(); k++) {
+                if(markForDeletion[k])
+                    continue;
+                for (unsigned int l = 0; l < unfilteredContactPoints.size(); l++) {
+                    if (l == k || markForDeletion[l])
+                        continue;
+                    if (markForDeletion[k])
+                        break;
+                    for (int m = l + 1; m < unfilteredContactPoints.size(); m++) {
+                        if (k == m)
+                            continue;
+                        Eigen::Vector3d  v = (unfilteredContactPoints[k].point - unfilteredContactPoints[l].point).cross(unfilteredContactPoints[k].point - unfilteredContactPoints[m].point);
+                        if (v.dot(v) < ZERO2 && ((unfilteredContactPoints[k].point - unfilteredContactPoints[l].point).dot(unfilteredContactPoints[k].point - unfilteredContactPoints[m].point) < 0)) {
+                            markForDeletion[k] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (unsigned int k = 0; k < unfilteredContactPoints.size(); k++) {
+                if(!markForDeletion[k]) {
+                    _contactPoints->push_back(unfilteredContactPoints[k]);
+                }
             }
         }
     }
