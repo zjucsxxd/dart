@@ -7,6 +7,11 @@ before_install() {
   (cd nlopt-2.4.1/; sh autogen.sh; make CPPFLAGS='-fPIC' && sudo make install)
 }
 
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+sudo apt-get update -qq
+if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
+if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+
 sudo add-apt-repository --yes ppa:libccd-debs/ppa
 sudo add-apt-repository --yes ppa:fcl-debs/ppa
 sudo add-apt-repository --yes ppa:dartsim/ppa

@@ -1,6 +1,6 @@
 language: cpp
 compiler:
-  #- gcc  # Disabled gcc version is 4.6.3 while DART requires 4.7.0 or greater
+  - gcc
   - clang
 before_install:
   - 'ci/before_install.sh'
